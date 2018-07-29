@@ -1,0 +1,12 @@
+language: node_js
+node_js: node
+services:
+- mongodb
+- postgres
+deploy:
+  provider: heroku
+  api_key:
+    secure: nB+ulh8T+0cBNkZ4XeUsedDKAc5BPstuQ1p135JgmIdrMSEDGOz2D2jXzMXdSRTikeaMzp27sj5VsWgLtTIbgOZJ64uK3rYPshBgFBNgrr/0J0AophcdAjB2/gLMRTaN1WSGciOiVno7vpagl7mD4CxtClVXro6HuThwA62GFBBZ98GwbEM9F9eLeFOyxv5GP5G1uPm6gGo4PI9r+dM5BH/pxkZ16PvilR+BXxH3UPBoqKBkbAobpoXdmIvlYJrFSF19dFrH/f2rFR5ePDWjf4WxSYiK2dHMfZMJgBIURHeg2iXbuOX7XjV75+F7m09AR3aILICQ3fRFt7zFmk8ysGrCPQEGx7ChwGL4xWPuqwvUqyOQU7MIqDOZ9vjFeqVnJvHIWWQX9kl+9SfyxTIMNdy117p8Tt4taekN2+ts6HcbQqXNL7qUcLfY7yxcG1B/dxl+lBTR83YpmjzFXqxxlFemPmIxh7Dwayt1oFlSExEU5lbesKbtaRTUPX+K4YANH4fpuI1EVaHUgwvPn2uTcYuwM1Xp4UyVT62qFFJ1taL62YciOpwKACqE1EKauGtr77+1B38zwqtlWNmN8pmq2cazDIrpDhJTi+vgv3XSx/NyGyXUDFcB7RtT+AuUPtk9kOArx81L9Pg6NpfUi1GV0P83tKKNuvJieUmQnsbTqVA=
+  app: simplify-budgeting-api
+  on:
+    repo: Jollendi91/simplify-budgeting-api
