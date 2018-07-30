@@ -42,7 +42,15 @@ const {sequelize} = require('../db/sequelize');
         as: 'bills',
         foreignKey: {allowNull: false}
       }
-    )
+    );
+
+    User.hasMany(
+      models.Category,
+      {
+        as: 'categories',
+        foreignKey: {allowNull: false}
+      }
+    );
   };
 
   User.prototype.apiRepr = function() {
