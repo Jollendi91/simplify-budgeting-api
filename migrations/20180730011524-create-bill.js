@@ -13,13 +13,13 @@ module.exports = {
         allowNull: false
       },
       amount: {
-        type: Sequelize.MONEY,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       user_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'User',
+          model: 'users',
           key: 'id'
         }
       },

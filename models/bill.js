@@ -6,11 +6,34 @@ const {sequelize} = require('../db/sequelize');
 
 
 const Bill = sequelize.define('Bill', {
-  bill: DataTypes.STRING,
-  amount: DataTypes.MONEY
-}, {});
+  bill: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  amount: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  }
+}, {
+  tableName: 'bills',
+  underscored: true
+});
+
 Bill.associate = function(models) {
-  // associations can be defined here
+  Bill.belongsTo(
+    models.User,
+    {foreignKey: {allowNull: false}}
+  );
 };
-return Bill;
+
+Bill.prototype.apiRepr = function() {
+  return {
+    id: this.id,
+    bill: this.bill,
+    amount: this.amount
+  }
+};
+
+module.exports = {
+  Bill
 };

@@ -28,7 +28,7 @@ const {sequelize} = require('../db/sequelize');
       field: 'setup-step'
     },
     monthlySalary: {
-      type: Sequelize.MONEY,
+      type: Sequelize.INTEGER,
       field: 'monthly_salary'
     }
   }, {
@@ -36,7 +36,13 @@ const {sequelize} = require('../db/sequelize');
     underscored: true
   });
   User.associate = function(models) {
-    // associations can be defined here
+    User.hasMany(
+      models.Bill,
+      {
+        as: 'bills',
+        foreignKey: {allowNull: false}
+      }
+    )
   };
 
   User.prototype.apiRepr = function() {

@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       monthlySalary: {
-        type: Sequelize.MONEY,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       createdAt: {
