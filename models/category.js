@@ -24,6 +24,14 @@ Category.associate = function(models) {
     models.Author,
     {foreignKey: {allowNull: false}}
   );
+
+  Category.hasMany(
+    models.Transaction,
+    {
+      as: 'transactions',
+      foreignKey: {allowNull: false}
+    }
+  );
 };
 
 Category.prototype.apiRepr = function() {
