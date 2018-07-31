@@ -14,8 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.INTEGER,
     allowNull: false
   }
-  }, 
-  {
+  },{
     tableName: 'transactions',
     underscored: true
   });

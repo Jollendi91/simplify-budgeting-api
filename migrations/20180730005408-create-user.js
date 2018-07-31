@@ -8,8 +8,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: Sequelize.STRING,
-      lastName: Sequelize.STRING,
+      first_name: Sequelize.STRING,
+      last_name: Sequelize.STRING,
       username: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -18,14 +18,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      setupStep: Sequelize.INTEGER,
-      monthlySalary: Sequelize.INTEGER,
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE
+      setup_step: Sequelize.INTEGER,
+      monthly_salary: Sequelize.INTEGER,
+      created_at: Sequelize.DATE,
+      updated_at: Sequelize.DATE
 
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('users');
   }
 };
