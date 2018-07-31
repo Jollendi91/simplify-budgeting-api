@@ -1,34 +1,32 @@
 'use strict';
 
-const Sequelize = require('sequelize');
-
-const {sequelize} = require('../db/sequelize');
-
+ module.exports = (sequelize, DataTypes) => { 
+   
   const User = sequelize.define('User', {
     firstName: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       field: 'first_name'
     },
     lastName: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       field: 'last_name'
     },
     username: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       unique: true,
       allowNull: false
     },
     password: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false
     },
     setupStep: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: 1,
-      field: 'setup-step'
+      field: 'setup_step'
     },
     monthlySalary: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       field: 'monthly_salary'
     }
   }, {
@@ -63,8 +61,5 @@ const {sequelize} = require('../db/sequelize');
       monthlySalary: this.monthlySalary
     }
   };
-
-  module.exports ={
-    User
-  };
-  
+  return User;
+};

@@ -8,35 +8,21 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
-        type: Sequelize.STRING
-      },
+      firstName: Sequelize.STRING,
+      lastName: Sequelize.STRING,
       username: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      setupStep: {
-        type: Sequelize.INTEGER
-      },
-      monthlySalary: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
+      setupStep: Sequelize.INTEGER,
+      monthlySalary: Sequelize.INTEGER,
+      createdAt: Sequelize.DATE,
+      updatedAt: Sequelize.DATE
+
     });
   },
   down: (queryInterface, Sequelize) => {

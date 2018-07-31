@@ -1,44 +1,40 @@
 'use strict';
 
-const Sequelize = require('sequelize');
-const {sequelize} = require('../db/sequelize');
-
-
-const Transaction = sequelize.define('Transaction', {
+module.exports = (sequelize, DataTypes) => {
+  const Transaction = sequelize.define('Transaction', {
   transaction: {
-    type: Sequelize.STRING,
+    type: DataTypes.STRING,
     allowNull: false
   },
   date: {
-    type: Sequelize.DATEONLY,
+    type: DataTypes.DATEONLY,
     allowNull: false
   },
   amount: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false
   }
-}, 
-{
-  tableName: 'transactions',
-  underscored: true
-});
+  }, 
+  {
+    tableName: 'transactions',
+    underscored: true
+  });
 
-Transaction.associate = function(models) {
-  Transaction.belongsTo(
-    models.Category,
-    {foreignKey: {allowNull: false}}
-  );
+  Transaction.associate = function(models) {
+    Transaction.belongsTo(
+      models.Category,
+      {foreignKey: {allowNull: false}}
+    );
+  };
+
+  Transaction.prototype.apiRepr = function() {
+    return {
+      id: this.id,
+      transaction: this.transaction,
+      date: this.date,
+      amount: this.amount
+    }
 };
-
-Transaction.prototype.apiRepr = function() {
-  return {
-    id: this.id,
-    transaction: this.transaction,
-    date: this.date,
-    amount: this.amount
-  }
-};
-
-  module.exports = {
-    Transaction
-  }
+return Transaction;
+}
+ 
