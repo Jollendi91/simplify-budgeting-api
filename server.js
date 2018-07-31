@@ -1,12 +1,44 @@
-const express = require('express');
-const app = express();
+'use strict';
 
-const PORT = process.env.PORT || 3000;
+const dotenv = require('dotenv');
+dotenv.config({path: './.env'});
 
-app.get('/api/*', (req, res) => {
-  res.json({ok: true});
-});
+const {PORT} = require('./config');
+const app = require('./app');
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+let server;
 
-module.exports = {app};
+function runServer(port) {
+    return new Promise((resolve, reject) => {
+        try {
+            server = app.listen(port, () => {
+                console.log(`App listening on port ${port}`);
+                resolve();
+            });
+        }
+        catch (err) {
+            console.error(`Can't start server: ${err}`);
+        }
+    });
+}
+
+function closeServer() {
+    return new Promise((resolve, reject) => {
+        console.log('Closing server');
+        server.close(err => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
+if (require.main === module) {
+    runServer(PORT).catch( err => {
+        console.error(`Can't start server: ${err}`);
+        throw err;
+    });
+};
+
+module.exports = {runServer, closeServer};
