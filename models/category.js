@@ -17,12 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   
   Category.associate = function(models) {
-    Category.belongsTo(
-      models.Author,
-      {foreignKey: {allowNull: false}}
-    );
-  
-    Category.hasMany(
+      Category.hasMany(
       models.Transaction,
       {
         as: 'transactions',
@@ -38,6 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       amount: this.amount
     }
   };
-  return Category;  
+  return Category 
 };
 

@@ -46,7 +46,10 @@
       models.Category,
       {
         as: 'categories',
-        foreignKey: {allowNull: false}
+        foreignKey: {
+          as: 'user_id',
+          allowNull: false
+        }
       }
     );
   };

@@ -3,7 +3,7 @@
 const dotenv = require('dotenv');
 dotenv.config({path: './.env'});
 
-const {PORT} = require('./config');
+const {PORT} = require('./config/config');
 const app = require('./app');
 
 let server;
