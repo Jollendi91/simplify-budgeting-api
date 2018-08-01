@@ -25,7 +25,9 @@ function runServer(port) {
 
 function closeServer() {
  return sequelize.close()
-    .then(server.close());
+  .then(() => {
+    return server.close();
+  })
 }
 
 if (require.main === module) {
