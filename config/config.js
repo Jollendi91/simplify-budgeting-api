@@ -23,9 +23,9 @@ module.exports = {
     dialect: "postgres"
   },
   test: {
-    username: "root",
-    password: null,
-    database: "database_test",
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.TEST_DATABASE_URL,
     host: "127.0.0.1",
     dialect: "postgres"
   },
@@ -36,6 +36,9 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "postgres"
   },
+  DATABASE_NAME: env === 'test' ? process.env.TEST_DATABASE_NAME : process.env.DATABASE_NAME,
+  DATABASE_USERNAME: process.env.DATABASE_USERNAME,
+  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
   DATABASE_URL: env === 'test' ? TEST_DATABASE_URL : DATABASE_URL,
   SEQUELIZE_OPTIONS: {
     logging: env === 'test' ? false : console.log,

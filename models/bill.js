@@ -1,14 +1,15 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
+const Sequelize = require('sequelize');
+const {sequelize} = require('../db/sequelize');
 
   const Bill = sequelize.define('Bill', {
     bill: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false
     }
   }, {
@@ -30,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       amount: this.amount
     }
   };
-  return Bill;
-};
-
+ 
+  module.exports = {
+    Bill
+  }
 

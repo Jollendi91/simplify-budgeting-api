@@ -1,17 +1,20 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
+const Sequelize = require('sequelize');
+const {sequelize} = require('../db/sequelize');
+
+
   const Transaction = sequelize.define('Transaction', {
   transaction: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false
   },
   date: {
-    type: DataTypes.DATEONLY,
+    type: Sequelize.DATEONLY,
     allowNull: false
   },
   amount: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false
   }
   },{
@@ -34,6 +37,8 @@ module.exports = (sequelize, DataTypes) => {
       amount: this.amount
     }
 };
-return Transaction;
+
+
+module.exports = {
+  Transaction
 }
- 

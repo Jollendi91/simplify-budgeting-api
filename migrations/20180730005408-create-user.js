@@ -20,10 +20,9 @@ module.exports = {
         allowNull: false
       },
       setup_step: Sequelize.INTEGER,
-      monthly_salary: Sequelize.INTEGER,
+      monthly_salary: Sequelize.DECIMAL,
       created_at: Sequelize.DATE,
       updated_at: Sequelize.DATE
-
     });
   },
   down: (queryInterface, Sequelize) => {

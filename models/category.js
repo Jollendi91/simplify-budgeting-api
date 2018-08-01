@@ -1,13 +1,15 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
+const Sequelize = require('sequelize');
+const {sequelize} = require('../db/sequelize');
+
   const Category = sequelize.define('Category', {
     category: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false
     }
   }, 
@@ -33,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       amount: this.amount
     }
   };
-  return Category 
-};
-
+  
+  module.exports = {
+    Category
+  }
