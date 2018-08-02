@@ -18,7 +18,7 @@ function seedUserData(seedNum=1) {
 }
 
 function generateUserData() {
-    User.create({
+    return User.create({
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         username: faker.internet.userName(),
@@ -32,7 +32,7 @@ describe('Users API resource', function() {
     beforeEach(function() {
         return User
             .truncate({cascade: true})
-            .then(seedUserData());
+            .then(() => seedUserData());
     });
 
     describe('GET endpoint', function() {
