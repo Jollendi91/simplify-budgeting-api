@@ -117,7 +117,7 @@ describe('Users API resource', function() {
         });
     });
 
-    describe('POST endpoint', function() {
+    describe('PUT endpoint', function() {
         it('should update fields you send over', function() {
             const updateData = {
                 setupStep: 2,
