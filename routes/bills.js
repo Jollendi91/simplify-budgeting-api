@@ -38,4 +38,30 @@ router.post('/:userId', (req, res) => {
         .catch(err => res.status(500).send({message: 'Internal server error'}));
 });
 
+router.put('/:id', (req, res) => {
+    if(!(req.params.id && req.body.id && req.params.id === req.body.id.toString())) {
+        const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+        console.error(message);
+
+        return res.status(400).json({message});
+    }
+
+    const toUpdate = {};
+    const updateableFields = ['bill', 'amount'];
+
+    updateableFields.forEach(field => {
+        if (field in req.body) {
+            toUpdate[field] = req.body[field];
+        }
+    });
+
+    return Bill.update(toUpdate, {
+        where: {
+            id: req.params.id
+        }
+    })
+    .then(() => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 module.exports = router;
