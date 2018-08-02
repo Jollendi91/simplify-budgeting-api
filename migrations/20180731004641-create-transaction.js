@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false
       },
       amount: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DECIMAL,
         allowNull: false
       },
       category_id: {
