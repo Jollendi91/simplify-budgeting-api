@@ -122,4 +122,32 @@ describe(`Bill API resource`, function() {
                 });
         });
     });
+
+    describe('PUT endpoint', function() {
+        it('should update a bill with fields you send over', function() {
+            const updateData = {
+                bill: 'Rent',
+                amount: '450.50'
+            }
+
+           return Bill.findOne()
+            .then(bill => {
+                updateData.id = bill.id;
+
+                return chai.request(app)
+                    .put(`/bills/${bill.id}`)
+                    .send(updateData);
+            })
+            .then(res => {
+                res.should.have.status(204);
+
+                return Bill.findById(updateData.id);
+            })
+            .then(bill => {
+                bill.id.should.equal(updateData.id);
+                bill.bill.should.equal(updateData.bill);
+                bill.amount.should.equal(updateData.amount);
+            });
+        });
+    });
 });
