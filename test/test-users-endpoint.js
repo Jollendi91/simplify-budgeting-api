@@ -116,4 +116,31 @@ describe('Users API resource', function() {
                 });
         });
     });
+
+    describe('POST endpoint', function() {
+        it('should update fields you send over', function() {
+            const updateData = {
+                setupStep: 2,
+                monthlySalary: faker.finance.amount()
+            };
+
+            return User.findOne()
+                .then(user => {
+                    updateData.id = user.id;
+
+                    return chai.request(app)
+                    .put(`/user/${user.id}`)
+                    .send(updateData);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return User.findById(updateData.id)
+                })
+                .then(user => {
+                    user.setupStep.should.equal(updateData.setupStep);
+                    user.monthlySalary.should.equal(updateData.monthlySalary);
+                });
+        });
+    });
 });
