@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "cross-env NODE_ENV=test mocha --timeout 3000 --exit"
+    "test": "cross-env NODE_ENV=test mocha --timeout 5000 --exit"
   },
   "author": "",
   "license": "ISC",

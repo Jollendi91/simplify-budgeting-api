@@ -63,7 +63,7 @@ describe(`Bill API resource`, function() {
                     user = _user;
                    
                     return chai.request(app)
-                        .get(`/bills/${user.id}`);
+                        .get(`/bills/user/${user.id}`);
                 })
                 .then(_res => {
                     res = _res;
@@ -101,7 +101,7 @@ describe(`Bill API resource`, function() {
                     user = _user;
 
                     return chai.request(app)
-                        .post(`/bills/${user.id}`)
+                        .post(`/bills/user/${user.id}`)
                         .send(newBillData);
                 })
                 .then(res => {
@@ -148,6 +148,27 @@ describe(`Bill API resource`, function() {
                 bill.bill.should.equal(updateData.bill);
                 bill.amount.should.equal(updateData.amount);
             });
+        });
+    });
+
+    describe('DELETE endpoint', function() {
+        it('should delete a bill by id', function() {
+            let bill;
+            
+            return Bill.findOne()
+                .then(_bill => {
+                    bill = _bill;
+                    return chai.request(app)
+                    .delete(`/bills/${bill.id}`);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return Bill.findById(bill.id);
+                })
+                .then(_bill => {
+                    should.not.exist(_bill);
+                });
         });
     });
 });
