@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const {sequelize} = require('../db/sequelize');
 
 
-const Transaction = sequelize.define('Transaction', {
+  const Transaction = sequelize.define('Transaction', {
   transaction: {
     type: Sequelize.STRING,
     allowNull: false
@@ -17,28 +17,28 @@ const Transaction = sequelize.define('Transaction', {
     type: Sequelize.INTEGER,
     allowNull: false
   }
-}, 
-{
-  tableName: 'transactions',
-  underscored: true
-});
+  },{
+    tableName: 'transactions',
+    underscored: true
+  });
 
-Transaction.associate = function(models) {
-  Transaction.belongsTo(
-    models.Category,
-    {foreignKey: {allowNull: false}}
-  );
+  Transaction.associate = function(models) {
+    Transaction.belongsTo(
+      models.Category,
+      {foreignKey: {allowNull: false}}
+    );
+  };
+
+  Transaction.prototype.apiRepr = function() {
+    return {
+      id: this.id,
+      transaction: this.transaction,
+      date: this.date,
+      amount: this.amount
+    }
 };
 
-Transaction.prototype.apiRepr = function() {
-  return {
-    id: this.id,
-    transaction: this.transaction,
-    date: this.date,
-    amount: this.amount
-  }
-};
 
-  module.exports = {
-    Transaction
-  }
+module.exports = {
+  Transaction
+}

@@ -1,8 +1,9 @@
 language: node_js
 node_js: node
 services:
-- mongodb
-- postgres
+- postgresql
+before_script:
+  - psql -c 'create database "test-simplify-app";' -U postgres
 deploy:
   provider: heroku
   api_key:

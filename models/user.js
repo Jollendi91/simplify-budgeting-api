@@ -1,9 +1,8 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-
 const {sequelize} = require('../db/sequelize');
-
+   
   const User = sequelize.define('User', {
     firstName: {
       type: Sequelize.STRING,
@@ -25,10 +24,10 @@ const {sequelize} = require('../db/sequelize');
     setupStep: {
       type: Sequelize.INTEGER,
       defaultValue: 1,
-      field: 'setup-step'
+      field: 'setup_step'
     },
     monthlySalary: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.DECIMAL,
       field: 'monthly_salary'
     }
   }, {
@@ -48,7 +47,10 @@ const {sequelize} = require('../db/sequelize');
       models.Category,
       {
         as: 'categories',
-        foreignKey: {allowNull: false}
+        foreignKey: {
+          as: 'user_id',
+          allowNull: false
+        }
       }
     );
   };
@@ -64,7 +66,7 @@ const {sequelize} = require('../db/sequelize');
     }
   };
 
-  module.exports ={
-    User
-  };
-  
+
+module.exports = {
+  User
+}
