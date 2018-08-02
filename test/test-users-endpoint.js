@@ -11,7 +11,6 @@ chai.use(chaiHttp);
 
 function seedUserData(seedNum=1) {
     const users = [];
-
     for (let i=0; i<seedNum; i++) {
         users.push(generateUserData());
     }
@@ -33,19 +32,18 @@ describe('Users API resource', function() {
     beforeEach(function() {
         return User
             .truncate({cascade: true})
-            .then(() => seedUserData());
+            .then(seedUserData());
     });
 
     describe('GET endpoint', function() {
         
         it('should return a user that matches id', function() {
             let user;
-            let res;
 
             return User.findOne()
                 .then(_user => {
                     user = _user;
-
+                    
                     return chai.request(app)
                 .get(`/user/${user.id}`);
                 })
@@ -60,10 +58,10 @@ describe('Users API resource', function() {
 
             return User.findOne()
                 .then(_user => {
-                    user = _user;
-
-                    return chai.request(app)
-                        .get(`/user/${user.id}`);
+                   user = _user;
+                   
+                   return chai.request(app)
+                    .get(`/user/${user.id}`);
                 })
                 .then(res => {
                     res.should.have.status(200);

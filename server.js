@@ -5,7 +5,6 @@ dotenv.config({path: './.env'});
 
 const {PORT} = require('./config/config');
 const app = require('./app');
-const {sequelize} = require('./db/sequelize');
 
 let server;
 
@@ -24,10 +23,15 @@ function runServer(port) {
 }
 
 function closeServer() {
- return sequelize.close()
-  .then(() => {
-    return server.close();
-  })
+    return new Promise((resolve, reject) => {
+        console.log('Closing server');
+        server.close(err => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    });
 }
 
 if (require.main === module) {
