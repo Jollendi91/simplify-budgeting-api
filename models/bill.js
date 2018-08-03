@@ -9,7 +9,7 @@ const {sequelize} = require('../db/sequelize');
       allowNull: false
     },
     amount: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.DECIMAL,
       allowNull: false
     }
   }, {
