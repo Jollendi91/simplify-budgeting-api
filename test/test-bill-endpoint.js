@@ -56,7 +56,6 @@ describe(`Bill API resource`, function() {
         it('should return a users bills', function() {
             let user;
             let resBill;
-            let res;
 
             return User.findOne()
                 .then(_user => {
@@ -65,8 +64,7 @@ describe(`Bill API resource`, function() {
                     return chai.request(app)
                         .get(`/bills/user/${user.id}`);
                 })
-                .then(_res => {
-                    res = _res;
+                .then(res => {
                     res.should.have.status(200);
                     res.body.bills.should.have.lengthOf(5);
 
