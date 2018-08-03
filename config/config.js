@@ -30,11 +30,8 @@ module.exports = {
     dialect: "postgres"
   },
   production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
-    dialect: "postgres"
+    use_env_variable: "postgres://ofqnrznc:JH4Bfhssrk7rfiQ3EuX41WoT_Dk67rbL@baasu.db.elephantsql.com:5432/ofqnrznc"
+    
   },
   DATABASE_NAME: env === 'test' ? process.env.TEST_DATABASE_NAME : process.env.DATABASE_NAME,
   DATABASE_USERNAME: process.env.DATABASE_USERNAME,
