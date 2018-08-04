@@ -28,7 +28,7 @@ function generateCategoryData(userId=null) {
     if(userId) {
         category.user_id = userId;
     }
-
+    
     return category;
 }
 
@@ -48,6 +48,9 @@ describe('Category API resource', function() {
     beforeEach(function() {
         return Category
             .truncate({cascade: true})
+            .then(() => {
+                return User.truncate({cascade: true});
+            })
             .then(() => seedData());
     });
 
@@ -59,7 +62,6 @@ describe('Category API resource', function() {
             return User.findOne()
                 .then(_user => {
                     user = _user;
-
                     return chai.request(app)
                         .get(`/categories/user/${user.id}`);
                 })
@@ -73,7 +75,7 @@ describe('Category API resource', function() {
                         category.should.include.keys('id', 'category', 'amount');
                     });
 
-                    resCategory = res.badRequest.categories[0];
+                    resCategory = res.body.categories[0];
 
                     return Category.findById(resCategory.id);
                 })

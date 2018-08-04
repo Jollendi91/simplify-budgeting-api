@@ -49,6 +49,9 @@ describe(`Bill API resource`, function() {
     beforeEach(function() {
         return Bill
             .truncate({cascade: true})
+            .then(() => {
+                return User.truncate({cascade: true})
+            })
             .then(() => seedData());
     });
 
@@ -60,7 +63,6 @@ describe(`Bill API resource`, function() {
             return User.findOne()
                 .then(_user => {
                     user = _user;
-                   
                     return chai.request(app)
                         .get(`/bills/user/${user.id}`);
                 })
