@@ -10,7 +10,7 @@ router.get('/', (req, res) => User.findById(req.user.id)
 );
 
 router.put('/', (req, res) => {
-    if(!(req.user.id && req.body.id && req.user.id === req.body.id.toString())) {
+    if(!(req.user.id && req.body.id && req.user.id === req.body.id)) {
         const message = (`Request user id (${req.user.id}) and request body id (${req.body.id}) must match`);
 
         console.error(message);

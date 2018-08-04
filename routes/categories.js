@@ -5,11 +5,11 @@ const router = express.Router();
 
 const {Category} = require('../models');
 
-router.get('/user/:userId', (req, res) => {
+router.get('/', (req, res) => {
 
     return Category.findAll({
         where: {
-            user_id: req.params.userId
+            user_id: req.user.id
         }
     })
     .then(categories => res.json({
@@ -17,7 +17,7 @@ router.get('/user/:userId', (req, res) => {
     }))
 });
 
-router.post('/user/:userId', (req, res) => {
+router.post('/', (req, res) => {
     const requiredFields = ['category', 'amount'];
 
     for (let i=0; i<requiredFields.length; i++) {
@@ -34,7 +34,7 @@ router.post('/user/:userId', (req, res) => {
     return Category.create({
         category: req.body.category,
         amount: req.body.amount,
-        user_id: req.params.userId
+        user_id: req.user.id
     })
     .then(category => res.status(201).json(category.apiRepr()))
     .catch(err => res.status(500).send({message: 'Internal server error'}));
