@@ -165,4 +165,28 @@ describe('Category API resource', function() {
             });
         });
     });
+
+    describe('DELETE endpoint', function() {
+
+        it('should delete a category by id', function() {
+            let category;
+
+            return Category.findOne()
+            .then(_category => {
+                category = _category;
+
+                return chai.request(app)
+                .delete(`/simplify/categories/${category.id}`)
+                .set('Authorization', `Bearer ${authToken}`);
+            })
+            .then(res => {
+                res.should.have.status(204);
+                
+                return Category.findById(category.id);
+            })
+            .then(_category => {
+                should.not.exist(_category);
+            });
+        });
+    });
 });
