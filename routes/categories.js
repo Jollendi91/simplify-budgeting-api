@@ -40,4 +40,36 @@ router.post('/', (req, res) => {
     .catch(err => res.status(500).send({message: 'Internal server error'}));
 });
 
+router.put('/:id', (req, res) => {
+
+    const toUpdate = {};
+    const updateableFields = ['category', 'amount'];
+
+    updateableFields.forEach(field => {
+        if (field in req.body) {
+            toUpdate[field] = req.body[field];
+        }
+    });
+
+    return Category.update(toUpdate, {
+        where: {
+            id: req.params.id,
+            user_id: req.user.id
+        }
+    })
+    .then(() => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.delete('/:id', (req, res) => {
+    return Category.destroy({
+        where: {
+            id: req.params.id,
+            user_id: req.user.id
+        }
+    })
+    .then(() => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 module.exports = router;
