@@ -41,6 +41,7 @@ function generateUserData() {
     })
     .then(res => {
         authToken = res.body.authToken;
+        return
     });
 }
 

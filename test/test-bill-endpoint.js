@@ -9,13 +9,31 @@ const {User, Bill} = require('../models');
 
 chai.use(chaiHttp);
 
+let authToken;
+let user;
+
 function seedUserData() {
-   return User.create({
+    user = {
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
+        setupStep: 1,
         monthlySalary: faker.finance.amount()
+    };
+
+    return chai.request(app)
+    .post('/simplify/users')
+    .send(user)
+    .then(res => {
+        user.id = res.body.id;
+        return chai.request(app)
+        .post('/simplify/auth/login')
+        .send({username: user.username, password: user.password});
+    })
+    .then(res => {
+        authToken = res.body.authToken;
+        return
     });
 }
 
@@ -34,7 +52,7 @@ function generateBillData(userId=null) {
 
 function seedData(seedNum=5) {
     return seedUserData()
-        .then(user => {
+        .then(() => {
             const promises = [];
             for (let i=0; i<seedNum; i++) {
                 promises.push(Bill.create(generateBillData(user.id)));
@@ -57,69 +75,60 @@ describe(`Bill API resource`, function() {
 
     describe('GET endpoint', function() {
         it('should return a users bills', function() {
-            let user;
             let resBill;
 
-            return User.findOne()
-                .then(_user => {
-                    user = _user;
-                    return chai.request(app)
-                        .get(`/bills/user/${user.id}`);
-                })
-                .then(res => {
-                    res.should.have.status(200);
-                    res.body.bills.should.have.lengthOf(5);
+            return chai.request(app)
+            .get(`/simplify/bills/`)
+            .set('Authorization', `Bearer ${authToken}`)
+            .then(res => {
+                res.should.have.status(200);
+                res.body.bills.should.have.lengthOf(5);
 
-                    res.body.bills.forEach(bill => {
-                        bill.should.be.an('object');
-                        bill.should.include.keys('id', 'bill', 'amount');
-                    });
-                    resBill = res.body.bills[0];
-            
-                    return Bill.findById(resBill.id)  
-                })
-                .then(bill => {
-                    resBill.id.should.equal(bill.id);
-                    resBill.bill.should.equal(bill.bill);
-                    resBill.amount.should.equal(bill.amount);
-                    bill.user_id.should.equal(user.id);
+                res.body.bills.forEach(bill => {
+                    bill.should.be.an('object');
+                    bill.should.include.keys('id', 'bill', 'amount');
                 });
+                resBill = res.body.bills[0];
+        
+                return Bill.findById(resBill.id)  
+            })
+            .then(bill => {
+                resBill.id.should.equal(bill.id);
+                resBill.bill.should.equal(bill.bill);
+                resBill.amount.should.equal(bill.amount);
+                bill.user_id.should.equal(user.id);
+            });
         });
     });
 
     describe('POST endpoint', function() {
         it('should add a bill', function() {
+
             const newBillData = {
                 bill: faker.commerce.productName(),
                 amount: faker.finance.amount()
             }
 
-            let user;
+            return chai.request(app)
+            .post(`/simplify/bills`)
+            .send(newBillData)
+            .set('Authorization', `Bearer ${authToken}`)
+            .then(res => {
+                res.should.have.status(201);
+                res.should.be.json;
+                res.body.should.be.an('object');
+                res.body.should.include.keys('id', 'bill', 'amount');
+                res.body.id.should.not.be.null;
+                res.body.bill.should.equal(newBillData.bill);
+                res.body.amount.should.equal(newBillData.amount);
 
-            return User.findOne()
-                .then(_user => {
-                    user = _user;
-
-                    return chai.request(app)
-                        .post(`/bills/user/${user.id}`)
-                        .send(newBillData);
-                })
-                .then(res => {
-                    res.should.have.status(201);
-                    res.should.be.json;
-                    res.body.should.be.an('object');
-                    res.body.should.include.keys('id', 'bill', 'amount');
-                    res.body.id.should.not.be.null;
-                    res.body.bill.should.equal(newBillData.bill);
-                    res.body.amount.should.equal(newBillData.amount);
-
-                    return Bill.findById(res.body.id)
-                })
-                .then(bill => {
-                    bill.bill.should.equal(newBillData.bill);
-                    bill.amount.should.equal(newBillData.amount);
-                    bill.user_id.should.equal(user.id);
-                });
+                return Bill.findById(res.body.id)
+            })
+            .then(bill => {
+                bill.bill.should.equal(newBillData.bill);
+                bill.amount.should.equal(newBillData.amount);
+                bill.user_id.should.equal(user.id);
+            });
         });
     });
 
@@ -135,7 +144,8 @@ describe(`Bill API resource`, function() {
                 updateData.id = bill.id;
 
                 return chai.request(app)
-                    .put(`/bills/${bill.id}`)
+                    .put(`/simplify/bills/${bill.id}`)
+                    .set('Authorization', `Bearer ${authToken}`)
                     .send(updateData);
             })
             .then(res => {
@@ -147,6 +157,7 @@ describe(`Bill API resource`, function() {
                 bill.id.should.equal(updateData.id);
                 bill.bill.should.equal(updateData.bill);
                 bill.amount.should.equal(updateData.amount);
+                bill.user_id.should.equal(user.id);
             });
         });
     });
@@ -159,7 +170,8 @@ describe(`Bill API resource`, function() {
                 .then(_bill => {
                     bill = _bill;
                     return chai.request(app)
-                    .delete(`/bills/${bill.id}`);
+                    .delete(`/simplify/bills/${bill.id}`)
+                    .set('Authorization', `Bearer ${authToken}`);
                 })
                 .then(res => {
                     res.should.have.status(204);
