@@ -1,5 +1,7 @@
 'use strict';
 
+const bcrypt = require('bcryptjs');
+
 const Sequelize = require('sequelize');
 const {sequelize} = require('../db/sequelize');
    
@@ -28,6 +30,7 @@ const {sequelize} = require('../db/sequelize');
     },
     monthlySalary: {
       type: Sequelize.DECIMAL,
+      defaultValue: 0,
       field: 'monthly_salary'
     }
   }, {
@@ -58,14 +61,19 @@ const {sequelize} = require('../db/sequelize');
   User.prototype.apiRepr = function() {
     return {
       id: this.id,
-      firstName: this.firstName,
-      lastName: this.lastName,
       username: this.username,
       setupStep: this.setupStep,
-      monthlySalary: this.monthlySalary
+      monthlySalary: this.monthlySalary 
     }
   };
 
+  User.validatePassword = function(password) {
+    return bcrypt.compare(password, this.password);
+  };
+
+  User.hashPassword = function(password) {
+    return bcrypt.hash(password, 10);
+  };
 
 module.exports = {
   User

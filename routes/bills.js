@@ -3,10 +3,10 @@ const router = express.Router();
 
 const {Bill} = require('../models');
 
-router.get('/user/:userId', (req, res) => {
+router.get('/', (req, res) => {
     Bill.findAll({
         where: {
-            user_id: req.params.userId
+            user_id: req.user.id
         }
     })
     .then(bills => res.json({
@@ -14,7 +14,7 @@ router.get('/user/:userId', (req, res) => {
     }))
 });
 
-router.post('/user/:userId', (req, res) => {
+router.post('/', (req, res) => {
     const requiredFields = ['bill', 'amount'];
 
     for (let i=0; i<requiredFields.length; i++) {
@@ -32,7 +32,7 @@ router.post('/user/:userId', (req, res) => {
         .create({
             bill: req.body.bill,
             amount: req.body.amount,
-            user_id: req.params.userId
+            user_id: req.user.id
         })
         .then(bill => res.status(201).json(bill.apiRepr()))
         .catch(err => res.status(500).send({message: 'Internal server error'}));
@@ -57,7 +57,8 @@ router.put('/:id', (req, res) => {
 
     return Bill.update(toUpdate, {
         where: {
-            id: req.params.id
+            id: req.params.id,
+            user_id: req.user.id
         }
     })
     .then(() => res.status(204).end())
@@ -67,7 +68,8 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     return Bill.destroy({
         where:{
-            id: req.params.id
+            id: req.params.id,
+            user_id: req.user.id
         }
     })
     .then(() => res.status(204).end())
