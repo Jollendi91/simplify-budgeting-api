@@ -55,7 +55,7 @@ router.post('/', (req, res, next) => {
         return next(err);
     }
 
-    const {username, password, firstName, lastName} = req.body;
+    const {username, password, firstName, lastName, monthlySalary} = req.body;
 
     return User.hashPassword(password)
         .then(hash => {
@@ -63,7 +63,8 @@ router.post('/', (req, res, next) => {
                 firstName,
                 lastName,
                 username,
-                password: hash
+                password: hash,
+                monthlySalary
             };
 
             return User.create(newUser)
