@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const {JWT_SECRET} = require('../config/config');
 
-funct jwtAuth(req, res, next) {
+function jwtAuth(req, res, next) {
 
     const auth = req.header("Authorization");
 
@@ -23,7 +23,7 @@ funct jwtAuth(req, res, next) {
         return next(err);
     }
 
-    jwt.verify(token, JWT_SECRET, (err, ecoded) => {
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
             err.message = "Invalid JWT";
             err.status = 401;

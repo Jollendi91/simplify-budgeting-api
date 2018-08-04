@@ -19,7 +19,8 @@ app.use(morgan('common'));
 app.use(express.json());
 
 // Public Routes
-app.use('/simplify/user', userRouter);
+app.use('/simplify/auth', authRouter);
+app.use('/simplify/users', userRouter);
 
 // Protected Routes
 app.use('/simplify/userinfo', jwtAuth, userInfoRouter)
