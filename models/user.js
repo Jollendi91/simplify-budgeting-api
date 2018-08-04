@@ -58,8 +58,6 @@ const {sequelize} = require('../db/sequelize');
   User.prototype.apiRepr = function() {
     return {
       id: this.id,
-      firstName: this.firstName,
-      lastName: this.lastName,
       username: this.username,
       setupStep: this.setupStep,
       monthlySalary: this.monthlySalary
