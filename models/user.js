@@ -67,11 +67,11 @@ const {sequelize} = require('../db/sequelize');
     }
   };
 
-  User.prototype.validatePassword = function (password) {
+  User.validatePassword = function(password) {
     return bcrypt.compare(password, this.password);
   };
 
-  User.prototype.hashPassword = function (password) {
+  User.hashPassword = function(password) {
     return bcrypt.hash(password, 10);
   };
 
