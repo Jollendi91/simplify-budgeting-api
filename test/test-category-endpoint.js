@@ -102,5 +102,35 @@ describe('Category API resource', function() {
             });
         });
     });
-});
 
+    describe('POST endpoint', function() {
+
+        it('should add a category', function() {
+            const newCategoryData = {
+                    category: faker.commerce.productName(),
+                    amount: faker.finance.amount()
+                };
+
+            return chai.request(app)
+            .post('/simplify/categories')
+            .send(newCategoryData)
+            .set('Authorization', `Bearer ${authToken}`)
+            .then(res => {
+                res.should.have.status(201);
+                res.should.be.json;
+                res.should.be.an('object');
+                res.body.should.have.keys('id', 'category', 'amount');
+                res.body.id.should.not.be.null;
+                res.body.category.should.equal(newCategoryData.category);
+                res.body.amount.should.equal(newCategoryData.amount);
+
+                return Category.findById(res.body.id);
+            })
+            .then(category => {
+                category.category.should.equal(newCategoryData.category);
+                category.amount.should.equal(newCategoryData.amount);
+                category.user_id.should.equal(user.id);
+            });
+        });
+    });
+});
