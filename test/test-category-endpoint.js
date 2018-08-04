@@ -133,4 +133,36 @@ describe('Category API resource', function() {
             });
         });
     });
+
+    describe('PUT endpoint', function() {
+
+        it('should update a category with fields you send over', function() {
+            
+            const updateData = {
+                category: 'updated Category',
+                amount: '500'
+            }
+
+            return Category.findOne()
+            .then(category => {
+                updateData.id = category.id;
+
+                return chai.request(app)
+                .put(`/simplify/categories/${category.id}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(updateData);
+            })
+            .then(res => {
+                res.should.have.status(204);
+
+                return Category.findById(updateData.id);
+            })
+            .then(category => {
+                category.id.should.equal(updateData.id);
+                category.category.should.equal(updateData.category);
+                category.amount.should.equal(updateData.amount);
+                category.user_id.should.equal(user.id);            
+            });
+        });
+    });
 });
