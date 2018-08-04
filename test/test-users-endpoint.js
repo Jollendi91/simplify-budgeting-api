@@ -17,13 +17,31 @@ function seedUserData(seedNum=1) {
     return Promise.all(users);
 }
 
+let authToken;
+let user;
+
 function generateUserData() {
-    return User.create({
+    user = {
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
+        setupStep: 1,
         monthlySalary: faker.finance.amount()
+    };
+
+    return chai.request(app)
+    .post('/simplify/users')
+    .send(user)
+    .then(res => {
+        user.id = res.body.id;
+        return chai.request(app)
+        .post('/simplify/auth/login')
+        .send({username: user.username, password: user.password});
+    })
+    .then(res => {
+        authToken = res.body.authToken;
+        return
     });
 }
 
@@ -38,15 +56,10 @@ describe('Users API resource', function() {
     describe('GET endpoint', function() {
         
         it('should return a user that matches id', function() {
-            let user;
-
-            return User.findOne()
-                .then(_user => {
-                    user = _user;
                     
-                    return chai.request(app)
-                .get(`/user/${user.id}`);
-                })
+            return chai.request(app)
+                .get(`/simplify/userinfo`)
+                .set("Authorization", `Bearer ${authToken}`)
                 .then(res => {
                     res.should.have.status(200);
                     res.body.id.should.equal(user.id);
@@ -54,26 +67,19 @@ describe('Users API resource', function() {
         });
 
         it('should return user with correct fields', function() {
-            let user;
-
-            return User.findOne()
-                .then(_user => {
-                   user = _user;
-                   
-                   return chai.request(app)
-                    .get(`/user/${user.id}`);
-                })
-                .then(res => {
-                    res.should.have.status(200);
-                    res.body.should.be.an('object');
-                    res.body.should.include.keys('id', 'firstName', 'lastName', 'username', 'setupStep', 'monthlySalary');
-                    res.body.id.should.equal(user.id);
-                    res.body.firstName.should.equal(user.firstName);
-                    res.body.lastName.should.equal(user.lastName);
-                    res.body.username.should.equal(user.username);
-                    res.body.setupStep.should.equal(user.setupStep);
-                    res.body.monthlySalary.should.equal(user.monthlySalary);
-                });
+    
+            return chai.request(app)
+            .get(`/simplify/userinfo`)
+            .set('Authorization', `Bearer ${authToken}`)
+            .then(res => {
+                res.should.have.status(200);
+                res.body.should.be.an('object');
+                res.body.should.include.keys('id', 'username', 'setupStep', 'monthlySalary');
+                res.body.id.should.equal(user.id);
+                res.body.username.should.equal(user.username);
+                res.body.setupStep.should.equal(user.setupStep);
+                res.body.monthlySalary.should.equal(user.monthlySalary);
+            });
         });
     });
 
@@ -89,15 +95,13 @@ describe('Users API resource', function() {
             }
 
             return chai.request(app)
-                .post('/user')
+                .post('/simplify/users')
                 .send(newUserData)
                 .then(res => {
                     res.should.have.status(201);
                     res.should.be.json;
                     res.should.be.an('object');
-                    res.body.should.include.keys('id', 'firstName', 'lastName', 'username', 'setupStep', 'monthlySalary');
-                    res.body.firstName.should.equal(newUserData.firstName);
-                    res.body.lastName.should.equal(newUserData.lastName);
+                    res.body.should.include.keys('id', 'username', 'setupStep', 'monthlySalary');
                     res.body.username.should.equal(newUserData.username);
                     res.body.monthlySalary.should.equal(newUserData.monthlySalary);
                     res.body.setupStep.should.equal(1);
@@ -124,23 +128,21 @@ describe('Users API resource', function() {
                 monthlySalary: faker.finance.amount()
             };
 
-            return User.findOne()
-                .then(user => {
-                    updateData.id = user.id;
+    
 
-                    return chai.request(app)
-                    .put(`/user/${user.id}`)
-                    .send(updateData);
-                })
-                .then(res => {
-                    res.should.have.status(204);
+        return chai.request(app)
+        .put(`/simplify/userinfo`)
+        .send(updateData)
+        .set('Authorization', `Bearer ${authToken}`)
+        .then(res => {
+            res.should.have.status(204);
 
-                    return User.findById(updateData.id)
-                })
-                .then(user => {
-                    user.setupStep.should.equal(updateData.setupStep);
-                    user.monthlySalary.should.equal(updateData.monthlySalary);
-                });
+            return User.findById(user.id)
+        })
+        .then(user => {
+            user.setupStep.should.equal(updateData.setupStep);
+            user.monthlySalary.should.equal(updateData.monthlySalary);
+        });
         });
     });
 });
