@@ -1,59 +1,79 @@
 const express = require('express');
 const router = express.Router();
 
-const {User, Bill, Category, Transaction} = require('../models');
+const {User} = require('../models');
 
-router.get('/:id', (req, res) => User.findById(req.params.id)
-    .then(user => res.json(user.apiRepr()))
-);
+router.post('/', (req, res, next) => {
 
-router.post('/', (req, res) => {
     const requiredFields = ['username', 'password'];
-    for (let i=0; i<requiredFields.length; i++) {
-        const field = requiredFields[i];
+    const missingField = requiredFields.find(field => !(field in req.body));
 
-        if(!(field in req.body)) {
-            const message = `Missing ${field} in request body`;
-            console.error(message);
-            return res.send(404).send(message);
-        }
+    if (missingField) {
+        const err = new Error(`Missing '${missingField}' in request body`);
+        err.status = 422;
+        return next(err);
     }
 
-    return User.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        username: req.body.username,
-        password: req.body.password,
-        monthlySalary: req.body.monthlySalary
-    })
-    .then(user => res.status(201).json(user.apiRepr()))
-    .catch(err => res.status(500).send({message: err.message}));
-});
+    const stringFields = ["username", "password", "firstName", "lastName"];
+    const nonStringField = stringFields.find(field => field in req.body && typeof req.body[field] !== "string");
 
-router.put('/:id', (req, res) => {
-    if(!(req.params.id && req.body.id && req.params.id === req.body.id.toString())) {
-        const message = (`Request path id (${req.params.id}) and request body id (${req.body.id}) must match`);
-
-        console.error(message);
-        res.status(400).json({message});
+    if (nonStringField) {
+        const err = new Error(`Field: '${nonStringField}' must be type string`);
+        err.status = 422;
+        return next(err);
     }
 
-    const toUpdate = {};
-    const updateableFields = ['setupStep', 'monthlySalary'];
+    const explicitlyTrimmedFields = ["username", "password"];
+    const nonTrimmedField = explicitlyTrimmedFields.find(field => req.body[field].trim() !== req.body[field]);
 
-    updateableFields.forEach(field => {
-        if (field in req.body) {
-            toUpdate[field] = req.body[field];
-        }
-    });
+    if (nonTrimmedField) {
+        const err = new Error(`Field: '${nonTrimmedField}' cannot start or end with whitespace`);
+        err.status = 422;
+        return next(err);
+    }
 
-    return User.update(toUpdate, {
-        where: {
-            id: req.params.id
-        }
-    })
-    .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    const sizedFields = {
+        username: {min: 1},
+        password: {min: 8, max: 72}
+    };
+
+    const tooSmallField = Object.keys(sizedFields).find(field => "min" in sizedFields[field] && req.body[field].trim().length < sizedFields[field].min);
+
+    if (tooSmallField) {
+        const min = sizedFields[tooSmallField].min;
+        const err = new Error(`Field: '${tooSmallField}' must be at least ${min} characters long`);
+        err.status = 422;
+        return next(err);
+    }
+
+    const tooLargeField = Object.keys(sizedFields).find(field => "max" in sizedFields[field] && req.body[field].trim().length > sizedFields[field].max);
+
+    if (tooLargeField) {
+        const max = sizedFields[tooLargeField].max;
+        const err = new Error(`Field: '${tooLargeField}' must be at most ${max} characters long`);
+        err.status = 422;
+        return next(err);
+    }
+
+    const {username, password, firstName, lastName} = req.body;
+
+    return User.hashPassword(password)
+        .then(hash => {
+            const newUser = {
+                firstName,
+                lastName,
+                username,
+                password: hash
+            };
+
+            return User.create(newUser)
+        })
+        .then(user => res.status(201).json(user.apiRepr()))
+        .catch(err => {
+            return res.status(500).send({message: err.message});
+        });
 });
+
+
 
 module.exports = router;

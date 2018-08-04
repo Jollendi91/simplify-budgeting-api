@@ -6,7 +6,9 @@ const cors = require('cors');
 
 const jwtAuth = require('./middleware/jwt-auth');
 
+const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
+const userInfoRouter = require('./routes/user-info');
 const billsRouter = require('./routes/bills');
 const categoryRouter = require('./routes/categories');
 
@@ -16,11 +18,13 @@ app.use(cors())
 app.use(morgan('common'));
 app.use(express.json());
 
+// Public Routes
+app.use('/simplify/user', userRouter);
 
 // Protected Routes
-app.use('/user', userRouter);
-app.use('/bills', billsRouter);
-app.use('/categories', categoryRouter);
+app.use('/simplify/userinfo', jwtAuth, userInfoRouter)
+app.use('/simplify/bills', jwtAuth, billsRouter);
+app.use('/simplify/categories', jwtAuth, categoryRouter);
 
 app.use((req, res, next) => {
     const err = new Error("Not Found");
