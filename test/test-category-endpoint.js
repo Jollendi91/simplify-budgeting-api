@@ -79,6 +79,7 @@ describe('Category API resource', function() {
 
             return chai.request(app)
             .get(`/simplify/categories`)
+            .query({year: 2018, month: 7})
             .set('Authorization', `Bearer ${authToken}`)
             .then(res => {
                 res.should.have.status(200);
@@ -87,7 +88,8 @@ describe('Category API resource', function() {
 
                 res.body.categories.forEach(category => {
                     category.should.be.an('object');
-                    category.should.include.keys('id', 'category', 'amount');
+                    category.transactions.should.be.an('array');
+                    category.should.include.keys('id', 'category', 'amount', 'transactions');
                 });
 
                 resCategory = res.body.categories[0];
