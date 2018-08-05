@@ -3,18 +3,39 @@
 const express = require('express');
 const router = express.Router();
 
-const {Category} = require('../models');
+const {Category, Transaction} = require('../models');
 
 router.get('/', (req, res) => {
 
     return Category.findAll({
         where: {
             user_id: req.user.id
-        }
+        },
+        include: [{
+            model: Transaction,
+            as: 'transactions'
+        }]
     })
     .then(categories => res.json({
-        categories: categories.map(category => category.apiRepr())
+        categories: categories.map(category => {
+            const transactions = category.transactions.map(transaction => transaction.apiRepr());
+          return category.apiRepr(transactions)
+        })
     }))
+});
+
+router.get('/:id/transactions', (req, res) => {
+    return Category.findOne({
+        where:{
+            id: req.params.id,
+            user_id: req.user.id
+        },
+        include: [{
+            model: Transaction,
+            as: 'transactions'
+        }]
+    })
+    .then(category => res.json({category}));
 });
 
 router.post('/', (req, res) => {
@@ -41,6 +62,12 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
+    if(!(req.params.id && req.body.id && req.params.id === req.body.id.toString())) {
+        const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+        console.error(message);
+
+        return res.status(400).json({message});
+    }
 
     const toUpdate = {};
     const updateableFields = ['category', 'amount'];
