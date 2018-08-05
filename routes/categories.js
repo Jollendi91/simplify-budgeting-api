@@ -2,10 +2,16 @@
 
 const express = require('express');
 const router = express.Router();
+const Sequelize = require('sequelize');
 
 const {Category, Transaction} = require('../models');
 
 router.get('/', (req, res) => {
+
+    const Op = Sequelize.Op;
+    const date = new Date();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
     return Category.findAll({
         where: {
@@ -13,7 +19,14 @@ router.get('/', (req, res) => {
         },
         include: [{
             model: Transaction,
-            as: 'transactions'
+            as: 'transactions',
+            where: {
+                date: {
+                    [Op.gt]: firstDay,
+                    [Op.lt]: lastDay
+                }
+            },
+            required: false
         }]
     })
     .then(categories => res.json({
@@ -22,20 +35,6 @@ router.get('/', (req, res) => {
           return category.apiRepr(transactions)
         })
     }))
-});
-
-router.get('/:id/transactions', (req, res) => {
-    return Category.findOne({
-        where:{
-            id: req.params.id,
-            user_id: req.user.id
-        },
-        include: [{
-            model: Transaction,
-            as: 'transactions'
-        }]
-    })
-    .then(category => res.json({category}));
 });
 
 router.post('/', (req, res) => {
