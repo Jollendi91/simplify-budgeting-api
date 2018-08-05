@@ -25,7 +25,10 @@ const {sequelize} = require('../db/sequelize');
   Transaction.associate = function(models) {
     Transaction.belongsTo(
       models.Category,
-      {foreignKey: {allowNull: false}}
+      {
+        foreignKey: {allowNull: false},
+        onDelete: 'CASCADE'
+      }
     );
   };
 

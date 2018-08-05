@@ -11,6 +11,7 @@ const userRouter = require('./routes/users');
 const userInfoRouter = require('./routes/user-info');
 const billsRouter = require('./routes/bills');
 const categoryRouter = require('./routes/categories');
+const transactionRouter = require('./routes/transactions');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/simplify/users', userRouter);
 app.use('/simplify/userinfo', jwtAuth, userInfoRouter)
 app.use('/simplify/bills', jwtAuth, billsRouter);
 app.use('/simplify/categories', jwtAuth, categoryRouter);
+app.use('/simplify/transactions', jwtAuth, transactionRouter);
 
 app.use((req, res, next) => {
     const err = new Error("Not Found");
@@ -36,7 +38,7 @@ app.use((req, res, next) => {
 //Custom Error Handler
 app.use((err, req, res, next) => {
     if (err.status) {
-        const errBody = Object.assign({}, err, {nessage: err.message});
+        const errBody = Object.assign({}, err, {message: err.message});
         res.status(err.status).json(errBody);
     } else {
         res.status(500).json({message: 'Internal Server Error'});
