@@ -9,7 +9,8 @@ const {Category, Transaction} = require('../models');
 router.get('/', (req, res) => {
 
     const Op = Sequelize.Op;
-    const date = new Date();
+
+    const date = new Date(req.query.year, req.query.month);
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 

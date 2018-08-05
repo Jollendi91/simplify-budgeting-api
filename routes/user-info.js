@@ -8,7 +8,7 @@ const {User, Bill, Category, Transaction} = require('../models');
 
 
 const Op = Sequelize.Op;
-const date = new Date();
+const date = new Date(2018, 5);
 const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -44,10 +44,10 @@ router.get('/', (req, res) => User.findOne({
         const categories = user.categories.map(category => {
             const transactions = category.transactions.map(transaction => transaction.apiRepr());
 
-            return category.apiRepr(transactions)
+            return category.apiRepr(transactions);
         });
 
-        return res.json(user.apiRepr(bills, categories))
+        return res.json(user.apiRepr(bills, categories));
     })
 );
 
