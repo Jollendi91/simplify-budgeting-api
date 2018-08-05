@@ -2,11 +2,53 @@
 
 const express = require('express');
 const router = express.Router();
+const Sequelize = require('sequelize');
 
-const {User} = require('../models');
+const {User, Bill, Category, Transaction} = require('../models');
 
-router.get('/', (req, res) => User.findById(req.user.id)
-    .then(user => res.json(user.apiRepr()))
+
+const Op = Sequelize.Op;
+const date = new Date();
+const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+router.get('/', (req, res) => User.findOne({
+    where: {
+        id: req.user.id
+    },
+    include: [{
+        model: Bill,
+        as: 'bills',
+        required: false
+    },
+    {
+        model: Category,
+        as: 'categories',
+        include: [{
+            model: Transaction,
+            as: 'transactions',
+            where: {
+                date: {
+                    [Op.gt]: firstDay,
+                    [Op.lt]: lastDay
+                }
+            },
+            required: false
+        }]
+    }
+    ]
+    })
+    .then(user => {
+        const bills = user.bills.map(bill => bill.apiRepr());
+
+        const categories = user.categories.map(category => {
+            const transactions = category.transactions.map(transaction => transaction.apiRepr());
+
+            return category.apiRepr(transactions)
+        });
+
+        return res.json(user.apiRepr(bills, categories))
+    })
 );
 
 router.put('/', (req, res) => {

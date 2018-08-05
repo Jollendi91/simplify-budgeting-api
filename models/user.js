@@ -58,12 +58,14 @@ const {sequelize} = require('../db/sequelize');
     );
   };
 
-  User.prototype.apiRepr = function() {
+  User.prototype.apiRepr = function(bills, categories) {
     return {
       id: this.id,
       username: this.username,
       setupStep: this.setupStep,
-      monthlySalary: this.monthlySalary 
+      monthlySalary: this.monthlySalary,
+      bills: bills,
+      categories: categories
     }
   };
 
