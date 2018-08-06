@@ -8,7 +8,7 @@ const {Transaction, Category} = require('../models');
 
 router.post('/category/:categoryId', (req, res) => {
 
-    const requiredFields = ['transaction', 'date', 'amount'];
+    const requiredFields = ['transaction', 'date', 'amount', 'category_id'];
 
     requiredFields.forEach(field => {
         if (!(field in req.body)) {

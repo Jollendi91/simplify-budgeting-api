@@ -80,7 +80,7 @@ function seedData(seedNum=3) {
         });
 }
 
-describe('GET transactions by eager loading', function() {
+describe('Transaction API resource', function() {
 
     beforeEach(function() {
         return Category.truncate({cascade: true})
@@ -88,33 +88,70 @@ describe('GET transactions by eager loading', function() {
             .then(() => seedData());
     });
 
-    it('should return transactions with category GET', function() {
-        let resTransaction;
-        let resCategory;
+    describe('GET transactions by eager loading', function() {
 
-        const year = new Date().getFullYear();
-        const month = new Date().getMonth();
+        it('should return transactions with category GET', function() {
+            let resTransaction;
+            let resCategory;
 
-        return chai.request(app)
-            .get('/simplify/categories')
-            .query({year, month})
-            .set('Authorization', `Bearer ${authToken}`)
-            .then(res => {
-                res.should.have.status(200);
-                res.should.be.json;
-                res.body.categories.should.have.lengthOf(1);
-                res.body.categories[0].transactions.should.be.an('array');
-                res.body.categories[0].transactions.should.have.lengthOf(3);
+            const year = new Date().getFullYear();
+            const month = new Date().getMonth();
 
-                res.body.categories[0].transactions.map(transaction => {
-                    transaction.should.be.an('object');
-                    transaction.should.include.keys('id', 'transaction', 'date', 'amount');
+            return chai.request(app)
+                .get('/simplify/categories')
+                .query({year, month})
+                .set('Authorization', `Bearer ${authToken}`)
+                .then(res => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.categories.should.have.lengthOf(1);
+                    res.body.categories[0].transactions.should.be.an('array');
+                    res.body.categories[0].transactions.should.have.lengthOf(3);
+
+                    res.body.categories[0].transactions.map(transaction => {
+                        transaction.should.be.an('object');
+                        transaction.should.include.keys('id', 'transaction', 'date', 'amount');
+                    });
+
+                    resCategory = res.body.categories[0];
+                    resTransaction = res.body.categories[0].transactions[0];
+
+                    return Transaction.findById(resTransaction.id);
+                })
+                .then(transaction => {
+                    transaction.id.should.equal(resTransaction.id);
+                    transaction.transaction.should.equal(resTransaction.transaction);
+                    transaction.date.should.equal(resTransaction.date);
+                    transaction.amount.should.equal(resTransaction.amount);
+                    transaction.category_id.should.equal(resCategory.id);
                 });
+        });
 
-                resCategory = res.body.categories[0];
-                resTransaction = res.body.categories[0].transactions[0];
+        it('should return transactions on GET userinfo', function() {
+            
+            let resTransaction;
+            let resCategory;
 
-                return Transaction.findById(resTransaction.id);
+            return chai.request(app)
+                .get('/simplify/userinfo')
+                .set('Authorization', `Bearer ${authToken}`)
+                .then(res => {
+                
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.categories.should.have.lengthOf(1);
+                    res.body.categories[0].transactions.should.have.lengthOf(3);
+                    res.body.categories[0].transactions.should.be.an('array');
+
+                    res.body.categories[0].transactions.map(transaction => {
+                        transaction.should.be.an('object');
+                        transaction.should.include.keys('id', 'transaction', 'date', 'amount');
+                    });
+
+                    resCategory = res.body.categories[0];
+                    resTransaction = res.body.categories[0].transactions[0];
+
+                    return Transaction.findById(resTransaction.id);
             })
             .then(transaction => {
                 transaction.id.should.equal(resTransaction.id);
@@ -123,40 +160,51 @@ describe('GET transactions by eager loading', function() {
                 transaction.amount.should.equal(resTransaction.amount);
                 transaction.category_id.should.equal(resCategory.id);
             });
+        });
     });
 
-    it('should return transactions on GET userinfo', function() {
-        
-        let resTransaction;
-        let resCategory;
+    describe('POST endpoint', function() {
 
-        return chai.request(app)
-            .get('/simplify/userinfo')
-            .set('Authorization', `Bearer ${authToken}`)
-            .then(res => {
-               
-                res.should.have.status(200);
-                res.should.be.json;
-                res.body.categories.should.have.lengthOf(1);
-                res.body.categories[0].transactions.should.have.lengthOf(3);
-                res.body.categories[0].transactions.should.be.an('array');
+        it('Should add a transaction', function() {
+            
+            let date = new Date().toISOString().split('T')[0];
+            const newTransaction = {
+                transaction: faker.commerce.productName(),
+                date: date,
+                amount: faker.finance.amount()
+            };
+            
+            let category;
 
-                res.body.categories[0].transactions.map(transaction => {
-                    transaction.should.be.an('object');
-                    transaction.should.include.keys('id', 'transaction', 'date', 'amount');
+            return Category.findOne()
+                .then(_category => {
+                    category = _category;
+
+                    newTransaction.category_id = category.id;
+
+                    return chai.request(app)
+                        .post(`/simplify/transactions/category/${_category.id}`)
+                        .send(newTransaction)
+                        .set('Authorization', `Bearer ${authToken}`);
+                })
+                .then(res => {
+                    res.should.have.status(201);
+                    res.should.be.json;
+                    res.body.should.be.an('object');
+                    res.body.should.include.keys('id', 'transaction', 'date', 'amount');
+                    res.body.id.should.not.be.null;
+                    res.body.transaction.should.equal(newTransaction.transaction);
+                    res.body.date.should.equal(newTransaction.date);
+                    res.body.amount.should.equal(newTransaction.amount);
+
+                    return Transaction.findById(res.body.id);
+                })
+                .then(transaction => {
+                    transaction.transaction.should.equal(newTransaction.transaction);
+                    transaction.date.should.equal(newTransaction.date);
+                    transaction.amount.should.equal(newTransaction.amount);
+                    transaction.category_id.should.equal(category.id);
                 });
-
-                resCategory = res.body.categories[0];
-                resTransaction = res.body.categories[0].transactions[0];
-
-                return Transaction.findById(resTransaction.id);
-        })
-        .then(transaction => {
-            transaction.id.should.equal(resTransaction.id);
-            transaction.transaction.should.equal(resTransaction.transaction);
-            transaction.date.should.equal(resTransaction.date);
-            transaction.amount.should.equal(resTransaction.amount);
-            transaction.category_id.should.equal(resCategory.id);
         });
     });
 });
