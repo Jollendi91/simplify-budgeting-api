@@ -207,4 +207,36 @@ describe('Transaction API resource', function() {
                 });
         });
     });
+
+    describe('PUT endpoint', function() {
+
+        it('should update a transaction with correct fields', function() {
+            const transUpdateData = {
+                transaction: 'Rent',
+                amount: 2500
+            }
+            let categoryId;
+
+            return Transaction.findOne()
+                .then(transaction => {
+                    transUpdateData.id = transaction.id;
+                    categoryId = transaction.category_id;
+
+                    return chai.request(app)
+                        .put(`/simplify/transactions/${transaction.id}/category/${transaction.category_id}`)
+                        .send(transUpdateData)
+                        .set('Authorization', `Bearer ${authToken}`);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return Transaction.findById(transUpdateData.id);
+                })
+                .then(transaction => {
+                    transaction.transaction.should.equal(transUpdateData.transaction);
+                    transaction.amount.should.equal(transUpdateData.amount);
+                    transaction.category_id.should.equal(categoryId);
+                });
+        });
+    });
 });
