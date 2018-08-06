@@ -234,8 +234,36 @@ describe('Transaction API resource', function() {
                 })
                 .then(transaction => {
                     transaction.transaction.should.equal(transUpdateData.transaction);
-                    transaction.amount.should.equal(transUpdateData.amount);
+                    transaction.amount.should.equal(transUpdateData.amount.toString());
                     transaction.category_id.should.equal(categoryId);
+                });
+        });
+    });
+
+    describe('DELETE endpoint', function() {
+
+        it('should delete transaction that matches id', function() {
+            let transactionId;
+
+            return Transaction.findOne()
+                .then(transaction => {
+                    transactionId = transaction.id;
+
+                    return Category.findOne();
+                })
+                .then(category => {
+
+                    return chai.request(app)
+                        .delete(`/simplify/transactions/${transactionId}/category/${category.id}`)
+                        .set('Authorization', `Bearer ${authToken}`);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return Transaction.findById(transactionId);
+                })
+                .then(transaction => {
+                    should.not.exist(transaction);
                 });
         });
     });
