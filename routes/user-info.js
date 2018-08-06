@@ -8,7 +8,7 @@ const {User, Bill, Category, Transaction} = require('../models');
 
 
 const Op = Sequelize.Op;
-const date = new Date(2018, 5);
+const date = new Date();
 const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
