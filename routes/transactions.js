@@ -64,7 +64,7 @@ router.put('/:id/category/:categoryId', (req, res) => {
     })
     .then(category => {
         if (category) {
-            console.log(category);
+        
             return Transaction.update(toUpdate, {
                 where: {
                     id: req.params.id,

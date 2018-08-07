@@ -207,4 +207,64 @@ describe('Transaction API resource', function() {
                 });
         });
     });
+
+    describe('PUT endpoint', function() {
+
+        it('should update a transaction with correct fields', function() {
+            const transUpdateData = {
+                transaction: 'Rent',
+                amount: 2500
+            }
+            let categoryId;
+
+            return Transaction.findOne()
+                .then(transaction => {
+                    transUpdateData.id = transaction.id;
+                    categoryId = transaction.category_id;
+
+                    return chai.request(app)
+                        .put(`/simplify/transactions/${transaction.id}/category/${transaction.category_id}`)
+                        .send(transUpdateData)
+                        .set('Authorization', `Bearer ${authToken}`);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return Transaction.findById(transUpdateData.id);
+                })
+                .then(transaction => {
+                    transaction.transaction.should.equal(transUpdateData.transaction);
+                    transaction.amount.should.equal(transUpdateData.amount.toString());
+                    transaction.category_id.should.equal(categoryId);
+                });
+        });
+    });
+
+    describe('DELETE endpoint', function() {
+
+        it('should delete transaction that matches id', function() {
+            let transactionId;
+
+            return Transaction.findOne()
+                .then(transaction => {
+                    transactionId = transaction.id;
+
+                    return Category.findOne();
+                })
+                .then(category => {
+
+                    return chai.request(app)
+                        .delete(`/simplify/transactions/${transactionId}/category/${category.id}`)
+                        .set('Authorization', `Bearer ${authToken}`);
+                })
+                .then(res => {
+                    res.should.have.status(204);
+
+                    return Transaction.findById(transactionId);
+                })
+                .then(transaction => {
+                    should.not.exist(transaction);
+                });
+        });
+    });
 });
