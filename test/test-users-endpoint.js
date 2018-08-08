@@ -58,7 +58,7 @@ describe('Users API resource', function() {
         it('should return a user that matches id', function() {
                     
             return chai.request(app)
-                .get(`/simplify/userinfo`)
+                .get(`/simplify/dashboard`)
                 .set("Authorization", `Bearer ${authToken}`)
                 .then(res => {
                     res.should.have.status(200);
@@ -69,7 +69,7 @@ describe('Users API resource', function() {
         it('should return user with correct fields', function() {
     
             return chai.request(app)
-            .get(`/simplify/userinfo`)
+            .get(`/simplify/dashboard`)
             .set('Authorization', `Bearer ${authToken}`)
             .then(res => {
                 res.should.have.status(200);
@@ -131,7 +131,7 @@ describe('Users API resource', function() {
     
 
         return chai.request(app)
-        .put(`/simplify/userinfo`)
+        .put(`/simplify/dashboard`)
         .send(updateData)
         .set('Authorization', `Bearer ${authToken}`)
         .then(res => {
