@@ -16,6 +16,4 @@ if (process.env.SIMPLIFY_DATABASE) {
 
 
 
-module.exports = {
-    sequelize
-}
+module.exports = sequelize;

@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const {sequelize} = require('../db/sequelize');
+const sequelize = require('../db/sequelize');
 
 
   const Transaction = sequelize.define('Transaction', {
@@ -42,6 +42,4 @@ const {sequelize} = require('../db/sequelize');
 };
 
 
-module.exports = {
-  Transaction
-}
+module.exports = Transaction;

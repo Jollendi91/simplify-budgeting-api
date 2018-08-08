@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const {sequelize} = require('../db/sequelize');
+const sequelize = require('../db/sequelize');
 
   const Category = sequelize.define('Category', {
     category: {
@@ -37,6 +37,4 @@ const {sequelize} = require('../db/sequelize');
     }
   };
   
-  module.exports = {
-    Category
-  }
+  module.exports = Category;

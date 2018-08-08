@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs');
 
 const Sequelize = require('sequelize');
-const {sequelize} = require('../db/sequelize');
+const sequelize = require('../db/sequelize');
    
   const User = sequelize.define('User', {
     firstName: {
@@ -77,6 +77,4 @@ const {sequelize} = require('../db/sequelize');
     return bcrypt.hash(password, 10);
   };
 
-module.exports = {
-  User
-}
+module.exports = User;

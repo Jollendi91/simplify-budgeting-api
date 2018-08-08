@@ -1,9 +1,9 @@
 'use strict';
 
-const {User} = require('./user');
-const {Bill} = require('./bill');
-const {Category} = require('./category');
-const {Transaction} = require('./transaction');
+const User = require('./user');
+const Bill = require('./bill');
+const Category = require('./category');
+const Transaction = require('./transaction');
 
 const db = {
   User,
