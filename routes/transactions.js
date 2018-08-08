@@ -72,7 +72,7 @@ router.post('/category/:categoryId', (req, res) => {
     .catch(err => res.status(500).send({message: 'Internal server error'}));
 });
 
-router.put('/:id/category/:categoryId', (req, res) => {
+router.put('/:id', (req, res) => {
     if(!(req.params.id && req.body.id && req.params.id === req.body.id.toString())) {
         const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
         console.error(message);
@@ -91,38 +91,50 @@ router.put('/:id/category/:categoryId', (req, res) => {
 
     return Category.findOne({
         where: {
-            id: req.params.categoryId,
             user_id: req.user.id
-        }
+        },
+        include: [{
+            model: Transaction,
+            as: 'transactions',
+            where: {
+                id: req.params.id
+            }
+        }]
     })
     .then(category => {
         if (category) {
-        
+            console.log(category.id);
             return Transaction.update(toUpdate, {
                 where: {
                     id: req.params.id,
-                    category_id: req.params.categoryId
+                    category_id: category.id
                 }
             });
         }
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(err => res.status(500).json({message: 'Internal server error', error: err}));
 });
 
-router.delete('/:id/category/:categoryId', (req, res) => {
+router.delete('/:id', (req, res) => {
     return Category.findOne({
         where: {
-            id: req.params.categoryId,
             user_id: req.user.id
-        }
+        },
+        include: [{
+            model: Transaction,
+            as: 'transactions',
+            where: {
+                id: req.params.id
+            }
+        }]
     })
     .then(category => {
         if (category) {
             return Transaction.destroy({
                 where: {
                     id: req.params.id,
-                    category_id: req.params.categoryId
+                    category_id: category.id
                 }
             });
         }
