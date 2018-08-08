@@ -223,7 +223,7 @@ describe('Transaction API resource', function() {
                     categoryId = transaction.category_id;
 
                     return chai.request(app)
-                        .put(`/simplify/transactions/${transaction.id}/category/${transaction.category_id}`)
+                        .put(`/simplify/transactions/${transaction.id}`)
                         .send(transUpdateData)
                         .set('Authorization', `Bearer ${authToken}`);
                 })
@@ -254,7 +254,7 @@ describe('Transaction API resource', function() {
                 .then(category => {
 
                     return chai.request(app)
-                        .delete(`/simplify/transactions/${transactionId}/category/${category.id}`)
+                        .delete(`/simplify/transactions/${transactionId}`)
                         .set('Authorization', `Bearer ${authToken}`);
                 })
                 .then(res => {

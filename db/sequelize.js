@@ -14,6 +14,4 @@ if (process.env.SIMPLIFY_DATABASE) {
     sequelize = new Sequelize(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD, SEQUELIZE_OPTIONS);
 };
 
-
-
 module.exports = sequelize;
