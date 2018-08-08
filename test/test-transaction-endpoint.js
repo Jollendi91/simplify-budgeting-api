@@ -127,13 +127,13 @@ describe('Transaction API resource', function() {
                 });
         });
 
-        it('should return transactions on GET userinfo', function() {
+        it('should return transactions on GET dashboard', function() {
             
             let resTransaction;
             let resCategory;
 
             return chai.request(app)
-                .get('/simplify/userinfo')
+                .get('/simplify/dashboard')
                 .set('Authorization', `Bearer ${authToken}`)
                 .then(res => {
                 
