@@ -89,55 +89,34 @@ router.put('/:id', (req, res) => {
         }
     });
 
-    return Category.findOne({
+    return Transaction.update(toUpdate, {
         where: {
-            user_id: req.user.id
+            id: req.params.id
         },
         include: [{
-            model: Transaction,
-            as: 'transactions',
+            model: Category,
+            as: 'categories',
             where: {
-                id: req.params.id
+                user_id: req.user.id
             }
         }]
-    })
-    .then(category => {
-        if (category) {
-            console.log(category.id);
-            return Transaction.update(toUpdate, {
-                where: {
-                    id: req.params.id,
-                    category_id: category.id
-                }
-            });
-        }
     })
     .then(() => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error', error: err}));
 });
 
 router.delete('/:id', (req, res) => {
-    return Category.findOne({
+    return Transaction.destroy({
         where: {
-            user_id: req.user.id
+            id: req.params.id
         },
         include: [{
-            model: Transaction,
-            as: 'transactions',
+            model: Category,
+            as: 'categories',
             where: {
-                id: req.params.id
+                user_id: req.user.id
             }
         }]
-    })
-    .then(category => {
-        if (category) {
-            return Transaction.destroy({
-                where: {
-                    id: req.params.id,
-                    category_id: category.id
-                }
-            });
-        }
     })
     .then(() => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal Server Error'}));
