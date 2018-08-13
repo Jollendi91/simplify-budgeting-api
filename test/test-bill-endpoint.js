@@ -1,11 +1,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
+const jwt = require('jsonwebtoken');
 
 const should = chai.should();
 
 const app = require('../app');
 const {User, Bill} = require('../models');
+const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
 
@@ -17,23 +19,21 @@ function seedUserData() {
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         username: faker.internet.userName(),
-        password: faker.internet.password(),
-        setupStep: 1,
-        monthlySalary: faker.finance.amount()
+        password: faker.internet.password()
     };
 
-    return chai.request(app)
-    .post('/simplify/users')
-    .send(user)
-    .then(res => {
-        user.id = res.body.id;
-        return chai.request(app)
-        .post('/simplify/auth/login')
-        .send({username: user.username, password: user.password});
-    })
-    .then(res => {
-        authToken = res.body.authToken;
-        return
+    return User.hashPassword(user.password)
+    .then(hash => User.create({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        password: hash,
+        setupStep: 1,
+        monthlySalary: faker.finance.amount()
+    }))
+    .then(_user => {
+        user = _user.apiRepr();
+        authToken = jwt.sign({user}, JWT_SECRET, {expiresIn: JWT_EXPIRY});
     });
 }
 
@@ -65,41 +65,41 @@ function seedData(seedNum=5) {
 describe(`Bill API resource`, function() {
 
     beforeEach(function() {
-        return Bill
-            .truncate({cascade: true})
-            .then(() => {
-                return User.truncate({cascade: true})
-            })
+        return User.truncate({cascade: true})
             .then(() => seedData());
     });
 
-    describe('GET endpoint', function() {
-        it('should return a users bills', function() {
+    describe('GET user info', function() {
+        it('should return bill info on GET dashboard', function() {
+            
             let resBill;
 
             return chai.request(app)
-            .get(`/simplify/bills/`)
-            .set('Authorization', `Bearer ${authToken}`)
-            .then(res => {
-                res.should.have.status(200);
-                res.body.bills.should.have.lengthOf(5);
+                .get('/simplify/dashboard')
+                .set('Authorization', `Bearer ${authToken}`)
+                .then(res => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.bills.should.be.an('array');
+                    res.body.bills.should.have.lengthOf(5);
+                    
+                    res.body.bills.map(bill => {
+                        bill.should.be.an('object');
+                        bill.should.include.keys('id', 'bill', 'amount');
+                    });
 
-                res.body.bills.forEach(bill => {
-                    bill.should.be.an('object');
-                    bill.should.include.keys('id', 'bill', 'amount');
-                });
-                resBill = res.body.bills[0];
-        
-                return Bill.findById(resBill.id)  
+                    resBill = res.body.bills[0];
+
+                    return Bill.findById(resBill.id);
             })
             .then(bill => {
-                resBill.id.should.equal(bill.id);
-                resBill.bill.should.equal(bill.bill);
-                resBill.amount.should.equal(bill.amount);
+                bill.id.should.equal(resBill.id);
+                bill.bill.should.equal(resBill.bill);
+                bill.amount.should.equal(resBill.amount);
                 bill.user_id.should.equal(user.id);
             });
         });
-    });
+    })
 
     describe('POST endpoint', function() {
         it('should add a bill', function() {

@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs');
 
 const Sequelize = require('sequelize');
-const {sequelize} = require('../db/sequelize');
+const sequelize = require('../db/sequelize');
    
   const User = sequelize.define('User', {
     firstName: {
@@ -58,12 +58,14 @@ const {sequelize} = require('../db/sequelize');
     );
   };
 
-  User.prototype.apiRepr = function() {
+  User.prototype.apiRepr = function(bills, categories) {
     return {
       id: this.id,
       username: this.username,
       setupStep: this.setupStep,
-      monthlySalary: this.monthlySalary 
+      monthlySalary: this.monthlySalary,
+      bills: bills,
+      categories: categories
     }
   };
 
@@ -75,6 +77,4 @@ const {sequelize} = require('../db/sequelize');
     return bcrypt.hash(password, 10);
   };
 
-module.exports = {
-  User
-}
+module.exports = User;

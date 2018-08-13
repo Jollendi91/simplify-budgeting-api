@@ -8,7 +8,7 @@ const jwtAuth = require('./middleware/jwt-auth');
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
-const userInfoRouter = require('./routes/user-info');
+const userInfoRouter = require('./routes/dashboard');
 const billsRouter = require('./routes/bills');
 const categoryRouter = require('./routes/categories');
 const transactionRouter = require('./routes/transactions');
@@ -24,7 +24,7 @@ app.use('/simplify/auth', authRouter);
 app.use('/simplify/users', userRouter);
 
 // Protected Routes
-app.use('/simplify/userinfo', jwtAuth, userInfoRouter)
+app.use('/simplify/dashboard', jwtAuth, userInfoRouter)
 app.use('/simplify/bills', jwtAuth, billsRouter);
 app.use('/simplify/categories', jwtAuth, categoryRouter);
 app.use('/simplify/transactions', jwtAuth, transactionRouter);

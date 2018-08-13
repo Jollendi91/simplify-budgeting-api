@@ -3,17 +3,6 @@ const router = express.Router();
 
 const {Bill} = require('../models');
 
-router.get('/', (req, res) => {
-    Bill.findAll({
-        where: {
-            user_id: req.user.id
-        }
-    })
-    .then(bills => res.json({
-        bills: bills.map(bill => bill.apiRepr())
-    }))
-});
-
 router.post('/', (req, res) => {
     const requiredFields = ['bill', 'amount'];
 

@@ -2,13 +2,46 @@
 
 const express = require('express');
 const router = express.Router();
+const Sequelize = require('sequelize');
 
 const {Transaction, Category} = require('../models');
 
 
+router.get('/category/:categoryId', (req, res) => {
+
+    const Op = Sequelize.Op;
+
+    const date = new Date(req.query.year, req.query.month);
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    return Category.findOne({
+        where: {
+            id: req.params.categoryId,
+            user_id: req.user.id
+        }
+    })
+    .then(category => {
+        if (category) {
+            return Transaction.findAll({
+                where: {
+                    category_id: req.params.categoryId,
+                    date: {
+                        [Op.gt]: firstDay,
+                         [Op.lt]: lastDay
+                    }
+                }
+            });
+        }
+    })
+    .then(transactions => res.json({
+        transactions: transactions.map(transaction => transaction.apiRepr())
+    }));
+});
+
 router.post('/category/:categoryId', (req, res) => {
 
-    const requiredFields = ['transaction', 'date', 'amount'];
+    const requiredFields = ['transaction', 'date', 'amount', 'category_id'];
 
     requiredFields.forEach(field => {
         if (!(field in req.body)) {
@@ -39,7 +72,7 @@ router.post('/category/:categoryId', (req, res) => {
     .catch(err => res.status(500).send({message: 'Internal server error'}));
 });
 
-router.put('/:id/category/:categoryId', (req, res) => {
+router.put('/:id', (req, res) => {
     if(!(req.params.id && req.body.id && req.params.id === req.body.id.toString())) {
         const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
         console.error(message);
@@ -56,43 +89,34 @@ router.put('/:id/category/:categoryId', (req, res) => {
         }
     });
 
-    return Category.findOne({
+    return Transaction.update(toUpdate, {
         where: {
-            id: req.params.categoryId,
-            user_id: req.user.id
-        }
-    })
-    .then(category => {
-        if (category) {
-            console.log(category);
-            return Transaction.update(toUpdate, {
-                where: {
-                    id: req.params.id,
-                    category_id: req.params.categoryId
-                }
-            });
-        }
+            id: req.params.id
+        },
+        include: [{
+            model: Category,
+            as: 'categories',
+            where: {
+                user_id: req.user.id
+            }
+        }]
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(err => res.status(500).json({message: 'Internal server error', error: err}));
 });
 
-router.delete('/:id/category/:categoryId', (req, res) => {
-    return Category.findOne({
+router.delete('/:id', (req, res) => {
+    return Transaction.destroy({
         where: {
-            id: req.params.categoryId,
-            user_id: req.user.id
-        }
-    })
-    .then(category => {
-        if (category) {
-            return Transaction.destroy({
-                where: {
-                    id: req.params.id,
-                    category_id: req.params.categoryId
-                }
-            });
-        }
+            id: req.params.id
+        },
+        include: [{
+            model: Category,
+            as: 'categories',
+            where: {
+                user_id: req.user.id
+            }
+        }]
     })
     .then(() => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal Server Error'}));
