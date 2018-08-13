@@ -33,7 +33,6 @@ function seedUserData() {
     })
     .then(res => {
         authToken = res.body.authToken;
-        return
     });
 }
 

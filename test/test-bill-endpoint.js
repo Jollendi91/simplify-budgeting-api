@@ -33,7 +33,6 @@ function seedUserData() {
     })
     .then(res => {
         authToken = res.body.authToken;
-        return
     });
 }
 
@@ -65,11 +64,7 @@ function seedData(seedNum=5) {
 describe(`Bill API resource`, function() {
 
     beforeEach(function() {
-        return Bill
-            .truncate({cascade: true})
-            .then(() => {
-                return User.truncate({cascade: true})
-            })
+        return User.truncate({cascade: true})
             .then(() => seedData());
     });
 
