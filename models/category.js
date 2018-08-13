@@ -28,11 +28,12 @@ const {sequelize} = require('../db/sequelize');
     );
   };
   
-  Category.prototype.apiRepr = function() {
+  Category.prototype.apiRepr = function(transactions) {
     return {
       id: this.id,
       category: this.category,
-      amount: this.amount
+      amount: this.amount,
+      transactions: transactions
     }
   };
   
