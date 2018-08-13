@@ -3,11 +3,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
+const jwt = require('jsonwebtoken');
 
 const should = chai.should();
 
 const app = require('../app');
 const {User, Category, Transaction} = require('../models');
+const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
 
@@ -20,21 +22,20 @@ function seedUserData() {
         lastName: faker.name.lastName(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
-        setupStep: 1,
-        monthlySalary: faker.finance.amount()
     };
 
-    return chai.request(app)
-    .post('/simplify/users')
-    .send(user)
-    .then(res => {
-        user.id = res.body.id;
-        return chai.request(app)
-        .post('/simplify/auth/login')
-        .send({username: user.username, password: user.password});
-    })
-    .then(res => {
-        authToken = res.body.authToken;
+    return User.hashPassword(user.password)
+    .then(hash => User.create({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        password: hash,
+        setupStep: 1, 
+        monthlySalary: faker.finance.amount()
+    }))
+    .then(_user => {
+        user = _user.apiRepr();
+        authToken = jwt.sign({user}, JWT_SECRET, {expiresIn: JWT_EXPIRY});
     });
 }
 
@@ -82,7 +83,8 @@ function seedData(seedNum=3) {
 describe('Transaction API resource', function() {
 
     beforeEach(function() {
-        return User.truncate({cascade: true})
+        return Category.truncate({cascade: true})
+            .then(() => User.truncate({cascade: true}))
             .then(() => seedData());
     });
 
