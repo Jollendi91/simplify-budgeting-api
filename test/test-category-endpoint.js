@@ -72,6 +72,37 @@ describe('Category API resource', function() {
             .then(() => seedData());
     });
 
+    describe('GET user info', function() {
+        it('should return category info on GET dashboard', function() {
+            
+            let resCategory;
+
+            return chai.request(app)
+                .get('/simplify/dashboard')
+                .set('Authorization', `Bearer ${authToken}`)
+                .then(res => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.categories.should.have.lengthOf(3);
+                    res.body.categories[0].transactions.should.be.an('array');
+
+                    res.body.categories.map(category => {
+                        category.should.be.an('object');
+                        category.should.include.keys('id', 'category', 'amount', 'transactions');
+                    });
+
+                    resCategory = res.body.categories[0];
+
+                    return Category.findById(resCategory.id);
+            })
+            .then(category => {
+                category.id.should.equal(resCategory.id);
+                category.amount.should.equal(resCategory.amount);
+                category.user_id.should.equal(user.id);
+            });
+        });
+    })
+
     describe('POST endpoint', function() {
 
         it('should add a category', function() {

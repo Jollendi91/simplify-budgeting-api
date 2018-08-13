@@ -69,6 +69,38 @@ describe(`Bill API resource`, function() {
             .then(() => seedData());
     });
 
+    describe('GET user info', function() {
+        it('should return bill info on GET dashboard', function() {
+            
+            let resBill;
+
+            return chai.request(app)
+                .get('/simplify/dashboard')
+                .set('Authorization', `Bearer ${authToken}`)
+                .then(res => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.bills.should.be.an('array');
+                    res.body.bills.should.have.lengthOf(5);
+                    
+                    res.body.bills.map(bill => {
+                        bill.should.be.an('object');
+                        bill.should.include.keys('id', 'bill', 'amount');
+                    });
+
+                    resBill = res.body.bills[0];
+
+                    return Bill.findById(resBill.id);
+            })
+            .then(bill => {
+                bill.id.should.equal(resBill.id);
+                bill.bill.should.equal(resBill.bill);
+                bill.amount.should.equal(resBill.amount);
+                bill.user_id.should.equal(user.id);
+            });
+        });
+    })
+
     describe('POST endpoint', function() {
         it('should add a bill', function() {
 
