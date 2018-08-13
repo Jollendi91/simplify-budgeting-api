@@ -6,38 +6,6 @@ const Sequelize = require('sequelize');
 
 const {Category, Transaction} = require('../models');
 
-router.get('/', (req, res) => {
-
-    const Op = Sequelize.Op;
-
-    const date = new Date(req.query.year, req.query.month);
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-
-    return Category.findAll({
-        where: {
-            user_id: req.user.id
-        },
-        include: [{
-            model: Transaction,
-            as: 'transactions',
-            where: {
-                date: {
-                    [Op.gt]: firstDay,
-                    [Op.lt]: lastDay
-                }
-            },
-            required: false
-        }]
-    })
-    .then(categories => res.json({
-        categories: categories.map(category => {
-            const transactions = category.transactions.map(transaction => transaction.apiRepr());
-          return category.apiRepr(transactions)
-        })
-    }))
-});
-
 router.post('/', (req, res) => {
     const requiredFields = ['category', 'amount'];
 

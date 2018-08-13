@@ -88,33 +88,36 @@ describe('Transaction API resource', function() {
             .then(() => seedData());
     });
 
-    describe('GET transactions by eager loading', function() {
+    describe('GET transactions endpoint and eager loading', function() {
 
-        it('should return transactions with category GET', function() {
+        it('should return transactions with GET', function() {
             let resTransaction;
             let resCategory;
 
             const year = new Date().getFullYear();
             const month = new Date().getMonth();
 
-            return chai.request(app)
-                .get('/simplify/categories')
-                .query({year, month})
-                .set('Authorization', `Bearer ${authToken}`)
+            return Category.findOne()
+                .then(category =>{
+                        resCategory = category;
+
+                    return chai.request(app)
+                    .get(`/simplify/transactions/category/${category.id}`)
+                    .query({year, month})
+                    .set('Authorization', `Bearer ${authToken}`)
+                })
                 .then(res => {
                     res.should.have.status(200);
                     res.should.be.json;
-                    res.body.categories.should.have.lengthOf(1);
-                    res.body.categories[0].transactions.should.be.an('array');
-                    res.body.categories[0].transactions.should.have.lengthOf(3);
+                    res.body.transactions.should.be.an('array');
+                    res.body.transactions.should.have.lengthOf(3);
 
-                    res.body.categories[0].transactions.map(transaction => {
+                    res.body.transactions.map(transaction => {
                         transaction.should.be.an('object');
                         transaction.should.include.keys('id', 'transaction', 'date', 'amount');
                     });
 
-                    resCategory = res.body.categories[0];
-                    resTransaction = res.body.categories[0].transactions[0];
+                    resTransaction = res.body.transactions[0];
 
                     return Transaction.findById(resTransaction.id);
                 })

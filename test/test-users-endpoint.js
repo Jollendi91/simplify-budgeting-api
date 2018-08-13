@@ -1,11 +1,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
+const jwt = require('jsonwebtoken');
 
 const should = chai.should();
 
 const app = require('../app');
 const {User} = require('../models');
+const {JWT_SECRET} = require('../config/config');
 
 chai.use(chaiHttp);
 
@@ -74,7 +76,7 @@ describe('Users API resource', function() {
             .then(res => {
                 res.should.have.status(200);
                 res.body.should.be.an('object');
-                res.body.should.include.keys('id', 'username', 'setupStep', 'monthlySalary');
+                res.body.should.include.keys('id', 'username', 'setupStep', 'monthlySalary', 'bills', 'categories');
                 res.body.id.should.equal(user.id);
                 res.body.username.should.equal(user.username);
                 res.body.setupStep.should.equal(user.setupStep);

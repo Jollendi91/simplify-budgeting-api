@@ -73,34 +73,6 @@ describe(`Bill API resource`, function() {
             .then(() => seedData());
     });
 
-    describe('GET endpoint', function() {
-        it('should return a users bills', function() {
-            let resBill;
-
-            return chai.request(app)
-            .get(`/simplify/bills/`)
-            .set('Authorization', `Bearer ${authToken}`)
-            .then(res => {
-                res.should.have.status(200);
-                res.body.bills.should.have.lengthOf(5);
-
-                res.body.bills.forEach(bill => {
-                    bill.should.be.an('object');
-                    bill.should.include.keys('id', 'bill', 'amount');
-                });
-                resBill = res.body.bills[0];
-        
-                return Bill.findById(resBill.id)  
-            })
-            .then(bill => {
-                resBill.id.should.equal(bill.id);
-                resBill.bill.should.equal(bill.bill);
-                resBill.amount.should.equal(bill.amount);
-                bill.user_id.should.equal(user.id);
-            });
-        });
-    });
-
     describe('POST endpoint', function() {
         it('should add a bill', function() {
 

@@ -72,39 +72,6 @@ describe('Category API resource', function() {
             .then(() => seedData());
     });
 
-    describe('GET endpoint', function() {
-        it('should return a users categories', function() {
-
-            let resCategory;
-
-            return chai.request(app)
-            .get(`/simplify/categories`)
-            .query({year: 2018, month: 7})
-            .set('Authorization', `Bearer ${authToken}`)
-            .then(res => {
-                res.should.have.status(200);
-                res.should.be.json;
-                res.body.categories.should.have.lengthOf(3);
-
-                res.body.categories.forEach(category => {
-                    category.should.be.an('object');
-                    category.transactions.should.be.an('array');
-                    category.should.include.keys('id', 'category', 'amount', 'transactions');
-                });
-
-                resCategory = res.body.categories[0];
-
-                return Category.findById(resCategory.id);
-            })
-            .then(category => {
-                category.id.should.equal(resCategory.id);
-                category.category.should.equal(resCategory.category);
-                category.amount.should.equal(resCategory.amount);
-                category.user_id.should.equal(user.id);
-            });
-        });
-    });
-
     describe('POST endpoint', function() {
 
         it('should add a category', function() {
