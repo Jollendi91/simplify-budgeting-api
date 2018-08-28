@@ -57,22 +57,38 @@ router.post('/', (req, res, next) => {
 
     const {username, password, firstName, lastName, monthlySalary} = req.body;
 
-    return User.hashPassword(password)
-        .then(hash => {
-            const newUser = {
-                firstName,
-                lastName,
-                username,
-                password: hash,
-                monthlySalary
-            };
+    return User.count({
+        where: {
+            username: username
+        }
+    })
+    .then(count => {
+        if (count > 0) {
+            // If there is an existing user with the same username
+            return Promise.reject({
+            code: 422,
+            reason: 'ValidationError',
+            message: 'Username already taken',
+            location: 'username'
+            });
+        }
+        return User.hashPassword(password);
+    })
+    .then(hash => {
+        const newUser = {
+            firstName,
+            lastName,
+            username,
+            password: hash,
+            monthlySalary
+        };
 
-            return User.create(newUser)
-        })
-        .then(user => res.status(201).json(user.apiRepr()))
-        .catch(err => {
-            return res.status(500).send({message: err.message});
-        });
+        return User.create(newUser)
+    })
+    .then(user => res.status(201).json(user.apiRepr()))
+    .catch(err => {
+        return res.status(500).send(err);
+    });
 });
 
 
