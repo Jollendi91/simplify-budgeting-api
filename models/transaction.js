@@ -37,7 +37,7 @@ const sequelize = require('../db/sequelize');
       id: this.id,
       transaction: this.transaction,
       date: this.date,
-      amount: this.amount
+      amount: parseFloat(this.amount).toFixed(2)
     }
 };
 

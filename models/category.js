@@ -32,7 +32,7 @@ const sequelize = require('../db/sequelize');
     return {
       id: this.id,
       category: this.category,
-      amount: this.amount,
+      amount: parseFloat(this.amount).toFixed(2),
       transactions: transactions
     }
   };

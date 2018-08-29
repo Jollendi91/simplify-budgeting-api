@@ -28,7 +28,7 @@ Bill.prototype.apiRepr = function() {
   return {
     id: this.id,
     bill: this.bill,
-    amount: this.amount
+    amount: parseFloat(this.amount).toFixed(2)
   }
 };
  
