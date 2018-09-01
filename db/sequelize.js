@@ -2,7 +2,13 @@
 
 const Sequelize = require('sequelize');
 
-const {DATABASE_URL, DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD, SEQUELIZE_OPTIONS} = require('../config/config');
+const {
+    DATABASE_URL, 
+    DATABASE_NAME, 
+    DATABASE_USERNAME, 
+    DATABASE_PASSWORD, 
+    SEQUELIZE_OPTIONS
+} = require('../config/config');
 
 console.log(`Connecting to database at ${DATABASE_URL}`);
 

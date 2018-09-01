@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const {Bill} = require('../models');
 
 router.post('/', (req, res) => {
@@ -24,7 +23,7 @@ router.post('/', (req, res) => {
             user_id: req.user.id
         })
         .then(bill => res.status(201).json(bill.apiRepr()))
-        .catch(err => res.status(500).send({message: 'Internal server error'}));
+        .catch(() => res.status(500).send({message: 'Internal server error'}));
 });
 
 router.put('/:id', (req, res) => {
@@ -51,7 +50,7 @@ router.put('/:id', (req, res) => {
         }
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(() => res.status(500).json({message: 'Internal server error'}));
 });
 
 router.delete('/:id', (req, res) => {
@@ -62,8 +61,7 @@ router.delete('/:id', (req, res) => {
         }
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(() => res.status(500).json({message: 'Internal server error'}));
 });
-
 
 module.exports = router;

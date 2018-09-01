@@ -6,16 +6,16 @@ const Category = require('./category');
 const Transaction = require('./transaction');
 
 const db = {
-  User,
-  Bill,
-  Category,
-  Transaction
+	User,
+	Bill,
+	Category,
+	Transaction
 }
 
 Object.keys(db).forEach(function(modelName) {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+	if (db[modelName].associate) {
+		db[modelName].associate(db);
+	}
 });
 
 module.exports = db;

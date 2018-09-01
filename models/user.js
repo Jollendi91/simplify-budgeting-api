@@ -1,80 +1,79 @@
 'use strict';
-
 const bcrypt = require('bcryptjs');
-
 const Sequelize = require('sequelize');
 const sequelize = require('../db/sequelize');
    
-  const User = sequelize.define('User', {
+const User = sequelize.define('User', {
     firstName: {
-      type: Sequelize.STRING,
-      field: 'first_name'
+        type: Sequelize.STRING,
+        field: 'first_name'
     },
     lastName: {
-      type: Sequelize.STRING,
-      field: 'last_name'
+        type: Sequelize.STRING,
+        field: 'last_name'
     },
     username: {
-      type: Sequelize.STRING,
-      unique: true,
-      allowNull: false
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
     },
     password: {
-      type: Sequelize.STRING,
-      allowNull: false
+        type: Sequelize.STRING,
+        allowNull: false
     },
     setupStep: {
-      type: Sequelize.INTEGER,
-      defaultValue: 1,
-      field: 'setup_step'
+        type: Sequelize.INTEGER,
+        defaultValue: 1,
+        field: 'setup_step'
     },
     monthlySalary: {
-      type: Sequelize.DECIMAL,
-      defaultValue: 0,
-      field: 'monthly_salary'
+        type: Sequelize.DECIMAL,
+        defaultValue: 0,
+        field: 'monthly_salary'
     }
-  }, {
+}, {
     tableName: 'users',
     underscored: true
-  });
-  User.associate = function(models) {
-    User.hasMany(
-      models.Bill,
-      {
-        as: 'bills',
-        foreignKey: {allowNull: false}
-      }
-    );
+});
 
+User.associate = function(models) {
     User.hasMany(
-      models.Category,
-      {
-        as: 'categories',
-        foreignKey: {
-          as: 'user_id',
-          allowNull: false
+        models.Bill,
+        {
+            as: 'bills',
+            foreignKey: {allowNull: false}
         }
-      }
+  );
+
+    User.hasMany(
+        models.Category,
+        {
+            as: 'categories',
+            foreignKey: {
+                as: 'user_id',
+                allowNull: false
+            }
+        }
     );
-  };
+};
 
-  User.prototype.apiRepr = function(bills, categories) {
+User.prototype.apiRepr = function(bills, categories) {
     return {
-      id: this.id,
-      username: this.username,
-      setupStep: this.setupStep,
-      monthlySalary: this.monthlySalary,
-      bills: bills,
-      categories: categories
+        id: this.id,
+        username: this.username,
+        setupStep: this.setupStep,
+        monthlySalary: this.monthlySalary,
+        bills: bills,
+        categories: categories
     }
-  };
+};
 
-  User.validatePassword = function(password) {
+User.validatePassword = function(password) {
     return bcrypt.compare(password, this.password);
-  };
+};
 
-  User.hashPassword = function(password) {
+User.hashPassword = function(password) {
     return bcrypt.hash(password, 10);
-  };
+};
 
 module.exports = User;
