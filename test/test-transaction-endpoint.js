@@ -1,17 +1,14 @@
 'use strict';
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const jwt = require('jsonwebtoken');
-
-const should = chai.should();
-
 const app = require('../app');
 const {User, Category, Transaction} = require('../models');
 const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
+const should = chai.should();
 
 let authToken;
 let user;
@@ -39,13 +36,13 @@ function seedUserData() {
     });
 }
 
-function seedCategoryData(userId=null) {
+function seedCategoryData(userId = null) {
     const category = {
         category: faker.commerce.productName(),
         amount: faker.finance.amount()
     }
 
-    if(userId) {
+    if (userId) {
         category.user_id = userId;
     }
 
@@ -53,7 +50,7 @@ function seedCategoryData(userId=null) {
 }
 
 
-function generateTransactionData(categoryId=null) {
+function generateTransactionData(categoryId = null) {
     const transaction = {
         transaction: faker.commerce.productName(),
         date: new Date(),
@@ -67,20 +64,20 @@ function generateTransactionData(categoryId=null) {
     return transaction;
 }
 
-function seedData(seedNum=3) {
+function seedData(seedNum = 3) {
     return seedUserData()
         .then(() => seedCategoryData(user.id))
         .then(category => {
             
             const promises = [];
-            for (let i=0; i<seedNum; i++) {
+            for (let i = 0; i < seedNum; i++) {
                 promises.push(Transaction.create(generateTransactionData(category.id)));
             }
             return Promise.all(promises);
         });
 }
 
-describe('Transaction API resource', function() {
+describe('Transaction API resource', function () {
 
     beforeEach(function() {
         return Category.truncate({cascade: true})
@@ -88,9 +85,9 @@ describe('Transaction API resource', function() {
             .then(() => seedData());
     });
 
-    describe('GET transactions endpoint and eager loading', function() {
+    describe('GET transactions endpoint and eager loading', function () {
 
-        it('should return transactions with GET', function() {
+        it('should return transactions with GET', function () {
             let resTransaction;
             let resCategory;
 
@@ -98,12 +95,15 @@ describe('Transaction API resource', function() {
             const month = new Date().getMonth();
 
             return Category.findOne()
-                .then(category =>{
+                .then(category => {
                         resCategory = category;
 
                     return chai.request(app)
                     .get(`/simplify/transactions/category/${category.id}`)
-                    .query({year, month})
+                    .query({
+                        year,
+                        month
+                    })
                     .set('Authorization', `Bearer ${authToken}`)
                 })
                 .then(res => {
@@ -130,7 +130,7 @@ describe('Transaction API resource', function() {
                 });
         });
 
-        it('should return transactions on GET dashboard', function() {
+        it('should return transactions on GET dashboard', function () {
             
             let resTransaction;
             let resCategory;
@@ -166,9 +166,9 @@ describe('Transaction API resource', function() {
         });
     });
 
-    describe('POST endpoint', function() {
+    describe('POST endpoint', function () {
 
-        it('Should add a transaction', function() {
+        it('Should add a transaction', function () {
             
             let date = new Date().toISOString().split('T')[0];
             const newTransaction = {
@@ -211,9 +211,9 @@ describe('Transaction API resource', function() {
         });
     });
 
-    describe('PUT endpoint', function() {
+    describe('PUT endpoint', function () {
 
-        it('should update a transaction with correct fields', function() {
+        it('should update a transaction with correct fields', function () {
             const transUpdateData = {
                 transaction: 'Rent',
                 amount: 2500
@@ -243,9 +243,9 @@ describe('Transaction API resource', function() {
         });
     });
 
-    describe('DELETE endpoint', function() {
+    describe('DELETE endpoint', function () {
 
-        it('should delete transaction that matches id', function() {
+        it('should delete transaction that matches id', function () {
             let transactionId;
 
             return Transaction.findOne()

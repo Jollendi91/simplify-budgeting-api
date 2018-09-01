@@ -1,15 +1,14 @@
+'use strict';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const jwt = require('jsonwebtoken');
-
-const should = chai.should();
-
 const app = require('../app');
 const {User, Bill} = require('../models');
 const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
+const should = chai.should();
 
 let authToken;
 let user;
@@ -60,7 +59,6 @@ function seedData(seedNum=5) {
             return Promise.all(promises);
         });
 }
-
 
 describe(`Bill API resource`, function() {
 

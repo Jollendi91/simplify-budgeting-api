@@ -2,14 +2,12 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const jwt = require('jsonwebtoken');
-
-const should = chai.should();
-
 const app = require('../app');
 const {User, Category} = require('../models');
 const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
+const should = chai.should();
 
 let authToken;
 let user;
@@ -37,43 +35,47 @@ function seedUserData() {
     });
 }
 
-function generateCategoryData(userId=null) {
+function generateCategoryData(userId = null) {
     const category = {
         category: faker.commerce.productName(),
         amount: faker.finance.amount()
     }
 
-    if(userId) {
+    if (userId) {
         category.user_id = userId;
     }
     
     return category;
 }
 
-function seedData(seedNum=3) {
+function seedData(seedNum = 3) {
     return seedUserData()
         .then(() => {
             const promises = [];
-            for (let i=0; i<seedNum; i++) {
+            for (let i = 0; i < seedNum; i++) {
                 promises.push(Category.create(generateCategoryData(user.id)));
             }
             return Promise.all(promises);
         });
 }
 
-describe('Category API resource', function() {
+describe('Category API resource', function () {
 
-    beforeEach(function() {
+    beforeEach(function () {
         return Category
-            .truncate({cascade: true})
+            .truncate({
+                cascade: true
+            })
             .then(() => {
-                return User.truncate({cascade: true});
+                return User.truncate({
+                    cascade: true
+                });
             })
             .then(() => seedData());
     });
 
-    describe('GET user info', function() {
-        it('should return category info on GET dashboard', function() {
+    describe('GET user info', function () {
+        it('should return category info on GET dashboard', function () {
             
             let resCategory;
 
@@ -103,9 +105,9 @@ describe('Category API resource', function() {
         });
     })
 
-    describe('POST endpoint', function() {
+    describe('POST endpoint', function () {
 
-        it('should add a category', function() {
+        it('should add a category', function () {
             const newCategoryData = {
                     category: faker.commerce.productName(),
                     amount: faker.finance.amount()
@@ -134,9 +136,9 @@ describe('Category API resource', function() {
         });
     });
 
-    describe('PUT endpoint', function() {
+    describe('PUT endpoint', function () {
 
-        it('should update a category with fields you send over', function() {
+        it('should update a category with fields you send over', function () {
             
             const updateData = {
                 category: 'updated Category',
@@ -166,9 +168,9 @@ describe('Category API resource', function() {
         });
     });
 
-    describe('DELETE endpoint', function() {
+    describe('DELETE endpoint', function () {
 
-        it('should delete a category by id', function() {
+        it('should delete a category by id', function () {
             let category;
 
             return Category.findOne()

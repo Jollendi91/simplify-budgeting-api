@@ -2,22 +2,19 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const jwt = require('jsonwebtoken');
-
-const should = chai.should();
-
 const app = require('../app');
 const {User} = require('../models');
 const {JWT_SECRET} = require('../config/config');
 
 chai.use(chaiHttp);
+const should = chai.should();
 
-
-describe('JWT Authorization resource', function() {
+describe('JWT Authorization resource', function () {
     let user;
     let username;
     let password;
 
-    beforeEach(function() {
+    beforeEach(function () {
         username = faker.internet.userName();
         password = faker.internet.password();
 
@@ -31,12 +28,15 @@ describe('JWT Authorization resource', function() {
             });
     });
 
-    describe('POST login endpoint', function() {
+    describe('POST login endpoint', function () {
 
-        it('Should return a valid JWT with correct login info', function() {
+        it('Should return a valid JWT with correct login info', function () {
             return chai.request(app)
                 .post('/simplify/auth/login')
-                .send({username, password})
+                .send({
+                    username,
+                    password
+                })
                 .then(res => {
                     res.should.have.status(200);
                     res.should.be.json;
@@ -46,10 +46,13 @@ describe('JWT Authorization resource', function() {
                 });
         });
 
-        it('should return a valid JWT with correct fields', function() {
+        it('should return a valid JWT with correct fields', function () {
             return chai.request(app)
                 .post('/simplify/auth/login')
-                .send({username, password})
+                .send({
+                    username,
+                    password
+                })
                 .then(res => {
                     const payload = jwt.verify(res.body.authToken, JWT_SECRET);
 
@@ -60,10 +63,13 @@ describe('JWT Authorization resource', function() {
             });
         });
 
-        it('should return a JWT that does not contain a password', function() {
+        it('should return a JWT that does not contain a password', function () {
             return chai.request(app)
             .post('/simplify/auth/login')
-            .send({username, password})
+                .send({
+                    username,
+                    password
+                })
             .then(res => {
                 const payload = jwt.verify(res.body.authToken, JWT_SECRET);
                 payload.should.not.have.property("password");

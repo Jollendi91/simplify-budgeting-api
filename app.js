@@ -1,11 +1,8 @@
 'use strict';
-
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-
 const jwtAuth = require('./middleware/jwt-auth');
-
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
 const userInfoRouter = require('./routes/dashboard');

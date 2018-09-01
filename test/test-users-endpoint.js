@@ -1,19 +1,18 @@
+'use strict';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const jwt = require('jsonwebtoken');
-
-const should = chai.should();
-
 const app = require('../app');
 const {User} = require('../models');
 const {JWT_SECRET, JWT_EXPIRY} = require('../config/config');
 
 chai.use(chaiHttp);
+const should = chai.should();
 
-function seedUserData(seedNum=1) {
+function seedUserData(seedNum = 1) {
     const users = [];
-    for (let i=0; i<seedNum; i++) {
+    for (let i = 0; i < seedNum; i++) {
         users.push(generateUserData());
     }
     return Promise.all(users);
@@ -21,7 +20,6 @@ function seedUserData(seedNum=1) {
 
 let authToken;
 let user;
-let authUser;
 
 function generateUserData() {
     user = {
@@ -46,17 +44,17 @@ function generateUserData() {
     });
 }
 
-describe('Users API resource', function() {
+describe('Users API resource', function () {
     
-    beforeEach(function() {
+    beforeEach(function () {
         return User
             .truncate({cascade: true})
             .then(() => seedUserData());
     });
 
-    describe('GET endpoint', function() {
+    describe('GET endpoint', function () {
         
-        it('should return a user that matches id', function() {
+        it('should return a user that matches id', function () {
                     
             return chai.request(app)
                 .get(`/simplify/dashboard`)
@@ -67,7 +65,7 @@ describe('Users API resource', function() {
                  });
         });
 
-        it('should return user with correct fields', function() {
+        it('should return user with correct fields', function () {
     
             return chai.request(app)
             .get(`/simplify/dashboard`)
@@ -84,9 +82,9 @@ describe('Users API resource', function() {
         });
     });
 
-    describe('POST endpoint', function() {
+    describe('POST endpoint', function () {
 
-        it('should add a new user', function() {
+        it('should add a new user', function () {
             const newUserData = {
                 firstName: faker.name.firstName(),
                 lastName: faker.name.lastName(),
@@ -122,8 +120,8 @@ describe('Users API resource', function() {
         });
     });
 
-    describe('PUT endpoint', function() {
-        it('should update fields you send over', function() {
+    describe('PUT endpoint', function () {
+        it('should update fields you send over', function () {
             const updateData = {
                 setupStep: 2,
                 monthlySalary: faker.finance.amount()
