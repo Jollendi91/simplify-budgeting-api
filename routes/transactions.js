@@ -1,16 +1,14 @@
 'use strict';
-
 const express = require('express');
 const router = express.Router();
 const Sequelize = require('sequelize');
-
 const {Transaction, Category} = require('../models');
-
 
 router.get('/category/:categoryId', (req, res) => {
 
     const Op = Sequelize.Op;
-
+    
+    // Get transactions from date and year passed in query params
     const date = new Date(req.query.year, req.query.month);
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -27,8 +25,8 @@ router.get('/category/:categoryId', (req, res) => {
                 where: {
                     category_id: req.params.categoryId,
                     date: {
-                        [Op.gt]: firstDay,
-                         [Op.lt]: lastDay
+                        [Op.gte]: firstDay,
+                         [Op.lte]: lastDay
                     }
                 }
             });
@@ -69,7 +67,7 @@ router.post('/category/:categoryId', (req, res) => {
         } 
     })
     .then(transaction => res.status(201).json(transaction.apiRepr()))
-    .catch(err => res.status(500).send({message: 'Internal server error'}));
+    .catch(() => res.status(500).send({message: 'Internal server error'}));
 });
 
 router.put('/:id', (req, res) => {
@@ -119,7 +117,7 @@ router.delete('/:id', (req, res) => {
         }]
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal Server Error'}));
+    .catch(() => res.status(500).json({message: 'Internal Server Error'}));
 });
 
 module.exports = router;

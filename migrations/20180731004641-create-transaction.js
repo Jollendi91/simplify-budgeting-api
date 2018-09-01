@@ -25,7 +25,8 @@ module.exports = {
         references: {
           model: 'categories',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE'
       },
       created_at: {
         allowNull: false,

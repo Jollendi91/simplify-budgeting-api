@@ -3,11 +3,11 @@
 const express = require('express');
 const router = express.Router();
 const Sequelize = require('sequelize');
-
 const {User, Bill, Category, Transaction} = require('../models');
 
-
 const Op = Sequelize.Op;
+
+// Eager load only current month transactions
 const date = new Date();
 const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -29,8 +29,8 @@ router.get('/', (req, res) => User.findOne({
             as: 'transactions',
             where: {
                 date: {
-                    [Op.gt]: firstDay,
-                    [Op.lt]: lastDay
+                    [Op.gte]: firstDay,
+                    [Op.lte]: lastDay
                 }
             },
             required: false
@@ -68,7 +68,7 @@ router.put('/', (req, res) => {
         }
     })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(() => res.status(500).json({message: 'Internal server error'}));
 });
 
 module.exports = router;

@@ -1,7 +1,5 @@
 'use strict';
-
 const jwt = require('jsonwebtoken');
-
 const {JWT_SECRET} = require('../config/config');
 
 function jwtAuth(req, res, next) {
