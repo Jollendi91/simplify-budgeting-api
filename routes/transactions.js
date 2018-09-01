@@ -25,8 +25,8 @@ router.get('/category/:categoryId', (req, res) => {
                 where: {
                     category_id: req.params.categoryId,
                     date: {
-                        [Op.gt]: firstDay,
-                         [Op.lt]: lastDay
+                        [Op.gte]: firstDay,
+                         [Op.lte]: lastDay
                     }
                 }
             });

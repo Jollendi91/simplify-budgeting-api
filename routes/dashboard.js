@@ -29,8 +29,8 @@ router.get('/', (req, res) => User.findOne({
             as: 'transactions',
             where: {
                 date: {
-                    [Op.gt]: firstDay,
-                    [Op.lt]: lastDay
+                    [Op.gte]: firstDay,
+                    [Op.lte]: lastDay
                 }
             },
             required: false
