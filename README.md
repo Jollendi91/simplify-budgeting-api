@@ -31,24 +31,24 @@ Simplify is an application that simplifies the budgeting process. Inspired by a 
 ## Screenshots
 
 ### Landing Page
-![Landing Page](screenshots/Simplify-LandingPage.png)
+![Landing Page](images/Simplify-LandingPage.png)
 
 ### Signup
-![Sign up](screenshots/Simplify-Signup.png)
+![Sign up](images/Simplify-Signup.png)
 
 ### Account Setup
 #### Step 1
-![Setup Step 1](screenshots/Simplify-Setup-1.png)
+![Setup Step 1](images/Simplify-Setup-1.png)
 #### Step 2
-![Setup Step 2](screenshots/Simplify-Setup-2.png)
+![Setup Step 2](images/Simplify-Setup-2.png)
 #### Step 3
-![Setup Step 3](screenshots/Simplify-Setup-3.png)
+![Setup Step 3](images/Simplify-Setup-3.png)
 
 ### Dashboard
-![Dashboard](screenshots/Simplify-Dashboard.png)
+![Dashboard](images/Simplify-Dashboard.png)
 
 ### Budget
-![Budget](screenshots/Simplify-Budget.png)
+![Budget](images/Simplify-Budget.png)
 
 ### Edit Profile
-![Edit Profile](screenshots/Simplify-EditProfile.png)
+![Edit Profile](images/Simplify-EditProfile.png)
