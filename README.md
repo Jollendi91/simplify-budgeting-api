@@ -27,3 +27,28 @@ Simplify is an application that simplifies the budgeting process. Inspired by a 
   
 ### Authentication
 - JSON Web Tokens
+
+## Screenshots
+
+### Landing Page
+![Landing Page](screenshots/Simplify-LandingPage.png)
+
+### Signup
+![Sign up](screenshots/Simplify-Signup.png)
+
+### Account Setup
+#### Step 1
+![Setup Step 1](screenshots/Simplify-Setup-1.png)
+#### Step 2
+![Setup Step 2](screenshots/Simplify-Setup-2.png)
+#### Step 3
+![Setup Step 3](screenshots/Simplify-Setup-3.png)
+
+### Dashboard
+![Dashboard](screenshots/Simplify-Dashboard.png)
+
+### Budget
+![Budget](screenshots/Simplify-Budget.png)
+
+### Edit Profile
+![Edit Profile](screenshots/Simplify-EditProfile.png)
